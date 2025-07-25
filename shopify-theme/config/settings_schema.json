@@ -1,0 +1,121 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Secret Weapon DSP",
+    "theme_version": "1.0.0",
+    "theme_author": "Secret Weapon DSP",
+    "theme_documentation_url": "https://secretweapondsp.com/docs",
+    "theme_support_url": "https://secretweapondsp.com/support"
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "color",
+        "id": "color_primary",
+        "label": "Primary color",
+        "default": "#667eea"
+      },
+      {
+        "type": "color",
+        "id": "color_secondary",
+        "label": "Secondary color",
+        "default": "#764ba2"
+      },
+      {
+        "type": "color",
+        "id": "color_accent",
+        "label": "Accent color",
+        "default": "#f093fb"
+      },
+      {
+        "type": "color",
+        "id": "color_background",
+        "label": "Background color",
+        "default": "#0a0a0f"
+      },
+      {
+        "type": "color",
+        "id": "color_text",
+        "label": "Text color",
+        "default": "#ffffff"
+      }
+    ]
+  },
+  {
+    "name": "Typography",
+    "settings": [
+      {
+        "type": "font_picker",
+        "id": "font_heading",
+        "label": "Heading font",
+        "default": "space_grotesk_n6"
+      },
+      {
+        "type": "font_picker",
+        "id": "font_body",
+        "label": "Body font",
+        "default": "inter_n4"
+      }
+    ]
+  },
+  {
+    "name": "Social media",
+    "settings": [
+      {
+        "type": "text",
+        "id": "social_facebook",
+        "label": "Facebook URL"
+      },
+      {
+        "type": "text",
+        "id": "social_instagram",
+        "label": "Instagram URL"
+      },
+      {
+        "type": "text",
+        "id": "social_youtube",
+        "label": "YouTube URL"
+      },
+      {
+        "type": "text",
+        "id": "social_tiktok",
+        "label": "TikTok URL"
+      }
+    ]
+  },
+  {
+    "name": "Footer",
+    "settings": [
+      {
+        "type": "textarea",
+        "id": "footer_description",
+        "label": "Footer description",
+        "default": "Professional audio processing tools designed to elevate your productions to the next level."
+      }
+    ]
+  },
+  {
+    "name": "Product features",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "show_lifetime_updates",
+        "label": "Show 'Lifetime Updates' badge",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_expert_support",
+        "label": "Show 'Expert Support' badge",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_vst3_compatible",
+        "label": "Show 'VST3 Compatible' badge",
+        "default": true
+      }
+    ]
+  }
+]

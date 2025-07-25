@@ -1,0 +1,28 @@
+<svg width="200" height="120" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Grid background -->
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#333" stroke-width="0.5" opacity="0.3"/>
+    </pattern>
+  </defs>
+  <rect width="200" height="120" fill="#0a0a0a"/>
+  <rect width="200" height="120" fill="url(#grid)"/>
+  
+  <!-- Frequency response line -->
+  <path d="M 0 110 Q 40 110 60 90 Q 80 60 100 30 Q 120 10 140 10 L 200 10" 
+        fill="none" 
+        stroke="#667eea" 
+        stroke-width="3"
+        stroke-linecap="round"/>
+  
+  <!-- Fill under curve -->
+  <path d="M 0 110 Q 40 110 60 90 Q 80 60 100 30 Q 120 10 140 10 L 200 10 L 200 120 L 0 120 Z" 
+        fill="#667eea" 
+        opacity="0.2"/>
+  
+  <!-- Center line -->
+  <line x1="0" y1="60" x2="200" y2="60" stroke="#666" stroke-width="1" stroke-dasharray="2,2" opacity="0.5"/>
+  
+  <!-- Cutoff indicator -->
+  <circle cx="80" cy="60" r="4" fill="#667eea"/>
+</svg>

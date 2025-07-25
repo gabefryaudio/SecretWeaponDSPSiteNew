@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="{{ request.locale.iso_code }}">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="">
+  <link rel="canonical" href="{{ canonical_url }}">
+
+  <title>
+    {{ page_title }}
+    {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
+    {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
+    {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+  </title>
+
+  {% if page_description %}
+    <meta name="description" content="{{ page_description | escape }}">
+  {% endif %}
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  {{ 'secret-weapon-theme.css' | asset_url | stylesheet_tag }}
+  
+  {{ content_for_header }}
+
+  <script>
+    document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
+  </script>
+</head>
+
+<body class="template-{{ template | split: '.' | first }}">
+  <div class="bg-animation"></div>
+  
+  <!-- Navigation -->
+  <nav id="navbar" class="navbar">
+    <div class="nav-container">
+      <a href="{{ routes.root_url }}" class="logo">
+        <img src="{{ 'secret-weapon-dsp-logo.svg' | asset_url }}" alt="{{ shop.name }}" />
+      </a>
+      
+      <div class="nav-links">
+        {% for link in linklists.main-menu.links %}
+          <a href="{{ link.url }}" {% if link.active %}class="active"{% endif %}>
+            {{ link.title }}
+          </a>
+        {% endfor %}
+        <a href="{{ routes.cart_url }}" class="cart-link">
+          <i class="fas fa-shopping-cart"></i>
+          <span class="cart-count" id="cart-count">{{ cart.item_count }}</span>
+        </a>
+      </div>
+      
+      <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+  </nav>
+
+  <main role="main" id="main-content">
+    {{ content_for_layout }}
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <h3>{{ shop.name }}</h3>
+          <p>{{ settings.footer_description }}</p>
+          <div class="social-links">
+            {% if settings.social_facebook != blank %}
+              <a href="{{ settings.social_facebook }}" target="_blank"><i class="fab fa-facebook-f"></i></a>
+            {% endif %}
+            {% if settings.social_instagram != blank %}
+              <a href="{{ settings.social_instagram }}" target="_blank"><i class="fab fa-instagram"></i></a>
+            {% endif %}
+            {% if settings.social_youtube != blank %}
+              <a href="{{ settings.social_youtube }}" target="_blank"><i class="fab fa-youtube"></i></a>
+            {% endif %}
+            {% if settings.social_tiktok != blank %}
+              <a href="{{ settings.social_tiktok }}" target="_blank"><i class="fab fa-tiktok"></i></a>
+            {% endif %}
+          </div>
+        </div>
+        
+        <div class="footer-section">
+          <h4>Products</h4>
+          <ul>
+            {% for product in collections.all.products limit: 5 %}
+              <li><a href="{{ product.url }}">{{ product.title }}</a></li>
+            {% endfor %}
+          </ul>
+        </div>
+        
+        <div class="footer-section">
+          <h4>Support</h4>
+          <ul>
+            {% for link in linklists.footer.links %}
+              <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+            {% endfor %}
+          </ul>
+        </div>
+        
+        <div class="footer-section">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="/policies/privacy-policy">Privacy Policy</a></li>
+            <li><a href="/policies/terms-of-service">Terms of Service</a></li>
+            <li><a href="/policies/refund-policy">Refund Policy</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  {{ 'secret-weapon-theme.js' | asset_url | script_tag }}
+</body>
+</html>

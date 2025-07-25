@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUT Compressor - Secret Weapon DSP</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root {
+            /* LUT Compressor Theme Colors */
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --primary-color: #667eea;
+            --primary-dark: #764ba2;
+            --accent-color: #00b4d8;
+            --dark-bg: #1a1a2e;
+            --darker-bg: #0a0a0a;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --text-primary: #ccc;
+            --text-secondary: rgba(255, 255, 255, 0.6);
+            --text-tertiary: rgba(255, 255, 255, 0.4);
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--darker-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* Background with gradient matching plugin */
+        .plugin-bg {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #1a1a2e 0%, #0a0a0a 100%);
+            z-index: -2;
+        }
+        
+        .plugin-glow {
+            position: fixed;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 30% 20%, rgba(102, 126, 234, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 70% 60%, rgba(118, 75, 162, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 50% 80%, rgba(0, 180, 216, 0.1) 0%, transparent 40%);
+            z-index: -1;
+            opacity: 0.5;
+            animation: glowShift 20s ease-in-out infinite;
+        }
+        
+        @keyframes glowShift {
+            0%, 100% { transform: scale(1) translate(0, 0); }
+            33% { transform: scale(1.1) translate(-20px, 10px); }
+            66% { transform: scale(0.95) translate(10px, -20px); }
+        }
+        
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(26, 26, 46, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        nav.scrolled {
+            background: rgba(10, 10, 10, 0.95);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0.75rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            height: 90px;
+        }
+        
+        .logo img {
+            height: 100%;
+            width: auto;
+            clip-path: inset(0 0 15% 0);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-gradient);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 10rem 2rem 4rem;
+            text-align: center;
+            position: relative;
+        }
+        
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.5rem;
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 50px;
+            font-size: 0.875rem;
+            color: var(--accent-color);
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 5rem;
+            font-weight: 300;
+            margin-bottom: 1.5rem;
+            letter-spacing: 4px;
+            background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+        
+        .hero-description {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            line-height: 1.8;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+        
+        .hero-actions {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+        }
+        
+        .btn {
+            padding: 1rem 2.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%);
+            color: #000;
+            border: 0;
+            box-shadow: 0 0 20px rgba(0, 180, 216, 0.5);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(0, 180, 216, 0.7);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border: 2px solid rgba(102, 126, 234, 0.5);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(102, 126, 234, 0.1);
+            border-color: var(--primary-color);
+        }
+        
+        /* Plugin Visual */
+        .plugin-visual {
+            padding: 4rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            animation: fadeInUp 0.8s ease-out 0.8s both;
+        }
+        
+        .plugin-interface {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .plugin-interface::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: var(--primary-gradient);
+            opacity: 0.3;
+            filter: blur(20px);
+            z-index: -1;
+        }
+        
+        .interface-preview {
+            background: linear-gradient(135deg, #1a1a2e 0%, #0a0a0a 100%);
+            border-radius: 12px;
+            padding: 2rem;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .interface-preview img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        
+        .interface-placeholder {
+            text-align: center;
+            color: var(--text-tertiary);
+        }
+        
+        .interface-placeholder i {
+            font-size: 4rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        /* Features Grid */
+        .features {
+            padding: 6rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        
+        .section-title {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-tertiary);
+            margin-bottom: 1rem;
+        }
+        
+        h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3rem;
+            font-weight: 600;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+        
+        .feature-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-color), transparent);
+            opacity: 0.7;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent-color);
+            text-shadow: 0 0 10px rgba(0, 180, 216, 0.5);
+        }
+        
+        .feature-card h3::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            margin-right: 10px;
+            box-shadow: 0 0 10px rgba(0, 180, 216, 0.8);
+        }
+        
+        /* Specs Section */
+        .specs {
+            padding: 4rem 2rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .specs-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+        }
+        
+        .spec-item {
+            text-align: center;
+        }
+        
+        .spec-value {
+            font-size: 3rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+        
+        .spec-label {
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+        }
+        
+        /* Demo Section */
+        .demo-section {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .demo-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 3rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            margin-top: 3rem;
+        }
+        
+        .demo-player {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 2rem;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .play-button {
+            width: 80px;
+            height: 80px;
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 30px rgba(102, 126, 234, 0.5);
+        }
+        
+        .play-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 50px rgba(102, 126, 234, 0.7);
+        }
+        
+        .play-button i {
+            font-size: 2rem;
+            color: white;
+            margin-left: 5px;
+        }
+        
+        /* Presets Showcase */
+        .presets {
+            padding: 4rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .presets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+        
+        .preset-card {
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .preset-card:hover {
+            background: rgba(102, 126, 234, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        
+        .preset-icon {
+            font-size: 2rem;
+            color: var(--accent-color);
+            margin-bottom: 0.75rem;
+        }
+        
+        .preset-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .preset-description {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Purchase Section */
+        .purchase {
+            padding: 6rem 2rem;
+            text-align: center;
+            position: relative;
+        }
+        
+        .purchase-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 4rem;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(0, 180, 216, 0.1) 100%);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .purchase-content::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: var(--primary-gradient);
+            border-radius: 24px;
+            opacity: 0.5;
+            filter: blur(20px);
+            z-index: -1;
+        }
+        
+        .price {
+            font-size: 4rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 2rem 0;
+        }
+        
+        .price-note {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+        
+        /* Footer */
+        footer {
+            padding: 4rem 2rem 2rem;
+            border-top: 1px solid var(--border-color);
+            background: rgba(10, 10, 10, 0.5);
+        }
+        
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        
+        .social-links a {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+        
+        .social-links a:hover {
+            background: rgba(102, 126, 234, 0.2);
+            border-color: var(--primary-color);
+            color: var(--text-primary);
+            transform: translateY(-3px);
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Hamburger Menu */
+        .hamburger {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            position: relative;
+            width: 30px;
+            height: 30px;
+            z-index: 1001;
+        }
+        
+        .hamburger span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background: var(--text-primary);
+            margin: 5px 0;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+        
+        /* Mobile Navigation */
+        .nav-links.mobile-active {
+            display: flex;
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 100vh;
+            background: rgba(26, 26, 46, 0.98);
+            backdrop-filter: blur(20px);
+            flex-direction: column;
+            padding: 6rem 1.5rem 2rem;
+            gap: 1.5rem;
+            align-items: flex-start;
+            box-shadow: -10px 0 40px rgba(0, 0, 0, 0.5);
+            animation: slideIn 0.3s ease;
+            z-index: 999;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+        
+        .nav-links.mobile-active a {
+            font-size: 1.125rem;
+            width: 100%;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        /* Mobile Overlay */
+        .mobile-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 998;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .mobile-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+        
+        /* Mobile */
+        @media (max-width: 768px) {
+            .hamburger {
+                display: block;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            h1 {
+                font-size: 3rem;
+                letter-spacing: 2px;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .specs-content {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2rem;
+            }
+            
+            .price {
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="plugin-bg"></div>
+    <div class="plugin-glow"></div>
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+    
+    <nav id="navbar">
+        <div class="nav-container">
+            <a href="secretweapon-homepage.html" class="logo">
+                <img src="images/secret-weapon-dsp-logo.svg" alt="Secret Weapon DSP">
+            </a>
+            <div class="nav-links">
+                <a href="secretweapon-homepage.html">Home</a>
+                <a href="plugins-overview.html">Plugins</a>
+                <a href="support-page.html">Support</a>
+                <a href="contact-page.html">Contact</a>
+            </div>
+            <button class="hamburger" id="hamburger" aria-label="Toggle navigation menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+    
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <i class="fas fa-bezier-curve"></i>
+                Custom Curve Designer
+            </div>
+            <h1>LUT COMPRESSOR</h1>
+            <p class="hero-description">
+                Draw your own compression curves to shape dynamics exactly to your taste. 
+                Develop your signature sound with curves no other compressor can create. 
+                Design custom waveshapers to find the perfect harmonic sweet spot for any source. 
+                Learn by doing - see instantly how each curve point affects your sound.
+            </p>
+            <div class="hero-actions">
+                <a href="#purchase" class="btn btn-primary">
+                    <i class="fas fa-shopping-cart"></i>
+                    Buy Now
+                </a>
+                <a href="#demo" class="btn btn-secondary">
+                    <i class="fas fa-play"></i>
+                    Try Demo
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <section class="plugin-visual">
+        <div class="plugin-interface">
+            <div class="interface-preview">
+                <div class="interface-placeholder">
+                    <i class="fas fa-bezier-curve"></i>
+                    <p>Dual Curve Designer Interface</p>
+                    <p style="font-size: 0.875rem; margin-top: 1rem;">
+                        Draw custom compression curves and waveshaper curves with intuitive 8-point editors
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="features">
+        <div class="section-header">
+            <div class="section-title">Dual Curve Designer</div>
+            <h2>Your Vision, Your Sound</h2>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <h3>Shape Dynamics Your Way</h3>
+                <p>
+                    Draw curves that make drums punch harder, vocals sit perfectly, or 
+                    bass stay controlled yet powerful. Create upward compression for 
+                    ambient textures, multi-stage curves for complex material, or asymmetric 
+                    shapes that breathe life into static sounds. Your curve, your sound.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>Learn By Designing</h3>
+                <p>
+                    Finally understand compression by seeing exactly how curves shape sound. 
+                    Move points and instantly hear the difference. Discover why certain 
+                    curves work for drums, others for vocals. Build intuition about dynamics 
+                    that transforms how you approach every mix.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>Find Your Harmonic Sweet Spot</h3>
+                <p>
+                    Draw waveshaper curves that add exactly the harmonics your tracks need. 
+                    Warm up digital coldness, add tube-like even harmonics, or create 
+                    aggressive odd harmonics for edge. See how each curve point affects 
+                    the tone and learn what shapes work best for different sources.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>Create Impossible Dynamics</h3>
+                <p>
+                    Design curves that no hardware could ever achieve. Make quiet parts 
+                    louder while keeping loud parts quiet. Create expansion that turns 
+                    into compression at a certain threshold. Draw S-curves that compress 
+                    mids while expanding extremes. The physics don't limit you anymore.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>Perfect It In Context</h3>
+                <p>
+                    Draw your curves while listening to the full mix. Shape compression 
+                    that reacts musically to your specific track. Adjust harmonic enhancement 
+                    until it sits perfectly. No more guessing with ratios and thresholds - 
+                    just draw what sounds right to your ears.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>Zero Latency</h3>
+                <p>
+                    True zero-latency processing makes LUT Compressor perfect for tracking 
+                    and live performance. No phase issues, no timing problems – just pure, 
+                    instantaneous dynamics control.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>Stand Out From The Crowd</h3>
+                <p>
+                    Develop your signature compression style that sets your mixes apart. 
+                    While others use the same presets, you're crafting unique dynamics 
+                    that become part of your sonic fingerprint. Export and share your 
+                    curves, building a library of go-to shapes for different situations.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>Evolve Your Productions</h3>
+                <p>
+                    Start with simple curves and evolve them as your ears develop. 
+                    Automate curve points for dynamic effects that breathe with the music. 
+                    Layer compression and waveshaping in ways that create entirely new 
+                    textures. This isn't just a compressor - it's a sound design tool.
+                </p>
+            </div>
+        </div>
+    </section>
+    
+    <section class="specs">
+        <div class="specs-content">
+            <div class="spec-item">
+                <div class="spec-value">8</div>
+                <div class="spec-label">Control Points</div>
+            </div>
+            <div class="spec-item">
+                <div class="spec-value">0.1-100ms</div>
+                <div class="spec-label">Attack Range</div>
+            </div>
+            <div class="spec-item">
+                <div class="spec-value">48dB</div>
+                <div class="spec-label">Max Gain Range</div>
+            </div>
+            <div class="spec-item">
+                <div class="spec-value">64-bit</div>
+                <div class="spec-label">Internal Processing</div>
+            </div>
+            <div class="spec-item">
+                <div class="spec-value">1-1000ms</div>
+                <div class="spec-label">Release Range</div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="demo-section" id="demo">
+        <div class="section-header">
+            <div class="section-title">Experience It</div>
+            <h2>Hear The Difference</h2>
+        </div>
+        
+        <div class="demo-container">
+            <div class="demo-player">
+                <button class="play-button">
+                    <i class="fas fa-play"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+    
+    
+    <section class="purchase" id="purchase">
+        <div class="purchase-content">
+            <div class="section-title">Get LUT Compressor</div>
+            <h2>Create Your Signature Sound</h2>
+            <div style="text-align: center; margin: 2rem 0;">
+                <div style="font-size: 4rem; font-weight: 700; color: #888; text-decoration: line-through; margin-bottom: -2.5rem;">$50</div>
+                <div class="price">$35</div>
+            </div>
+            <p style="color: #00b4d8; font-weight: 600; text-align: center; margin-bottom: 2rem;">Limited Time Sale!</p>
+            <div class="hero-actions">
+                <a href="#" class="btn btn-primary">
+                    <i class="fas fa-shopping-cart"></i>
+                    Purchase Now
+                </a>
+                <a href="#" class="btn btn-secondary">
+                    <i class="fas fa-download"></i>
+                    Download Trial
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="footer-content">
+            <div class="social-links">
+                <a href="https://www.facebook.com/secretweapondsp" target="_blank" rel="noopener"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.instagram.com/secretweapondsp/" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.youtube.com/@secretweapondsp" target="_blank" rel="noopener"><i class="fab fa-youtube"></i></a>
+                <a href="https://www.tiktok.com/@secretweapondsp" target="_blank" rel="noopener"><i class="fab fa-tiktok"></i></a>
+            </div>
+            <p>&copy; 2025 Secret Weapon DSP. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+        
+        // Hamburger menu functionality
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.querySelector('.nav-links');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+        const body = document.body;
+        
+        function toggleMobileMenu() {
+            hamburger.classList.toggle('active');
+            navLinks.classList.toggle('mobile-active');
+            mobileOverlay.classList.toggle('active');
+            body.style.overflow = body.style.overflow === 'hidden' ? '' : 'hidden';
+        }
+        
+        hamburger.addEventListener('click', toggleMobileMenu);
+        
+        mobileOverlay.addEventListener('click', () => {
+            if (navLinks.classList.contains('mobile-active')) {
+                toggleMobileMenu();
+            }
+        });
+        
+        // Close menu when clicking on a link
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (navLinks.classList.contains('mobile-active')) {
+                    toggleMobileMenu();
+                }
+            });
+        });
+        
+        // Play button demo
+        const playButton = document.querySelector('.play-button');
+        let isPlaying = false;
+        
+        playButton.addEventListener('click', () => {
+            isPlaying = !isPlaying;
+            const icon = playButton.querySelector('i');
+            icon.className = isPlaying ? 'fas fa-pause' : 'fas fa-play';
+        });
+    </script>
+</body>
+</html>

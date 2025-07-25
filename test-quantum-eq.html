@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum EQ WASM Test</title>
+    <script type="module" src="https://mainline.i3s.unice.fr/wam_wc/wam-host/wamHost.js"></script>
+    <script type="module" src="https://mainline.i3s.unice.fr/wam_wc/wam-plugin/wamPlugin.js"></script>
+    <style>
+        body {
+            background: #000;
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        wam-host {
+            display: block;
+            width: 100%;
+            height: 600px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+        }
+        .info {
+            margin: 20px 0;
+            padding: 15px;
+            background: #1a1a1a;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Quantum EQ WASM Plugin Test</h1>
+    
+    <div class="info">
+        <p>This is a simple test page to verify the WASM plugin loads correctly.</p>
+        <p>Note: You need to run this from a web server (not file://) for the plugin to load properly.</p>
+    </div>
+    
+    <wam-host id="host">
+    </wam-host>
+    
+    <script>
+        window.addEventListener('load', async () => {
+            console.log('Page loaded, waiting for host to be ready...');
+            
+            // Wait a bit for the wam-host to fully initialize
+            setTimeout(() => {
+                try {
+                    console.log('Creating WASM plugin...');
+                    const plugin = document.createElement("wam-plugin");
+                    plugin.id = "quantumEQ";
+                    
+                    // Use absolute path from current location
+                    const currentPath = window.location.pathname;
+                    const basePath = currentPath.substring(0, currentPath.lastIndexOf('/'));
+                    const pluginPath = basePath + "/WASM/Quantum EQ 1.0/index.js";
+                    
+                    console.log('Plugin path:', pluginPath);
+                    plugin.setAttribute('src', pluginPath);
+                    
+                    const host = document.getElementById("host");
+                    if (host) {
+                        host.appendChild(plugin);
+                        console.log('Plugin element added to host');
+                        
+                        plugin.addEventListener('load', () => {
+                            console.log('Quantum EQ WASM plugin loaded successfully');
+                        });
+                        
+                        plugin.addEventListener('error', (e) => {
+                            console.error('Error loading plugin:', e);
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error creating plugin:', error);
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

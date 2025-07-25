@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secret Weapon DSP - Professional Marketing Banners</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #000;
+            color: white;
+            padding: 2rem;
+        }
+        
+        .banner-container {
+            margin-bottom: 4rem;
+        }
+        
+        .banner-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #666;
+        }
+        
+        .banner {
+            position: relative;
+            overflow: hidden;
+            background: #000;
+        }
+        
+        /* Banner Sizes */
+        .facebook-banner {
+            width: 820px;
+            height: 312px;
+        }
+        
+        .youtube-banner {
+            width: 2560px;
+            height: 1440px;
+        }
+        
+        .instagram-post {
+            width: 1080px;
+            height: 1350px;
+        }
+        
+        .instagram-story {
+            width: 1080px;
+            height: 1920px;
+        }
+        
+        /* Preview scaling */
+        .preview-container {
+            transform: scale(0.4);
+            transform-origin: top left;
+            margin-bottom: -60%;
+        }
+        
+        /* Hero Banner Styles */
+        .hero-banner {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(ellipse at center, #1a1a2e 0%, #000 100%);
+        }
+        
+        /* Visual Effects */
+        .energy-burst {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(255, 67, 101, 0.3) 0%, transparent 40%);
+            filter: blur(100px);
+            animation: pulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.3; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.5; }
+        }
+        
+        .waveform-visual {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40%;
+            background: linear-gradient(to top, rgba(255, 67, 101, 0.2) 0%, transparent 100%);
+            mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0 50 Q 10 20 20 50 T 40 50 T 60 50 T 80 50 T 100 50 L 100 100 L 0 100 Z" fill="white"/></svg>');
+            mask-size: 100% 100%;
+            mask-repeat: no-repeat;
+        }
+        
+        /* Typography */
+        .power-headline {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 900;
+            text-transform: uppercase;
+            line-height: 0.9;
+            letter-spacing: -0.02em;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .emotional-hook {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 3rem;
+            background: linear-gradient(135deg, #ff4365 0%, #ff6b8a 100%);
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            position: relative;
+            z-index: 10;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(255, 67, 101, 0.3);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(255, 67, 101, 0.4);
+        }
+        
+        .urgency-badge {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            background: #ff0000;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            font-weight: 700;
+            font-size: 1rem;
+            transform: rotate(-5deg);
+            box-shadow: 0 5px 20px rgba(255, 0, 0, 0.5);
+            animation: shake 2s ease-in-out infinite;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: rotate(-5deg); }
+            25% { transform: rotate(-7deg); }
+            75% { transform: rotate(-3deg); }
+        }
+        
+        /* Product Showcase */
+        .product-visual {
+            position: absolute;
+            right: 5%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40%;
+            height: 80%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+        
+        .plugin-interface {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, #1a1a2e 0%, #0a0a1f 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        /* Spectrum Analyzer Effect */
+        .spectrum {
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 60%;
+            padding: 2rem;
+        }
+        
+        .spectrum-bar {
+            flex: 1;
+            background: linear-gradient(to top, #ff4365 0%, #ff6b8a 50%, #ffb700 100%);
+            border-radius: 2px 2px 0 0;
+            animation: dance 1s ease-in-out infinite;
+        }
+        
+        .spectrum-bar:nth-child(1) { height: 70%; animation-delay: 0s; }
+        .spectrum-bar:nth-child(2) { height: 90%; animation-delay: 0.1s; }
+        .spectrum-bar:nth-child(3) { height: 60%; animation-delay: 0.2s; }
+        .spectrum-bar:nth-child(4) { height: 85%; animation-delay: 0.3s; }
+        .spectrum-bar:nth-child(5) { height: 75%; animation-delay: 0.4s; }
+        .spectrum-bar:nth-child(6) { height: 95%; animation-delay: 0.5s; }
+        .spectrum-bar:nth-child(7) { height: 65%; animation-delay: 0.6s; }
+        .spectrum-bar:nth-child(8) { height: 80%; animation-delay: 0.7s; }
+        
+        @keyframes dance {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(0.7); }
+        }
+        
+        /* Social Proof */
+        .social-proof {
+            position: absolute;
+            bottom: 2rem;
+            left: 2rem;
+            font-size: 0.9rem;
+            opacity: 0.7;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .stars {
+            color: #ffd700;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="margin-bottom: 3rem; color: #fff;">Secret Weapon DSP - Professional Marketing Banners</h1>
+    
+    <!-- Facebook Banner - Emotional Appeal -->
+    <div class="banner-container">
+        <h2 class="banner-title">Facebook Cover - "Transform Your Sound" Campaign</h2>
+        <div class="preview-container">
+            <div class="banner facebook-banner">
+                <div class="hero-banner">
+                    <div class="energy-burst"></div>
+                    <div class="waveform-visual"></div>
+                    
+                    <div style="position: absolute; left: 5%; top: 50%; transform: translateY(-50%); max-width: 50%;">
+                        <h2 class="power-headline" style="font-size: 3rem; margin-bottom: 1rem;">
+                            STOP FIGHTING<br/>
+                            YOUR PLUGINS
+                        </h2>
+                        <p class="emotional-hook">Finally create the sounds in your head</p>
+                        <a href="#" class="cta-button">SEE THE REVOLUTION →</a>
+                    </div>
+                    
+                    <div class="product-visual">
+                        <div class="plugin-interface">
+                            <div class="spectrum">
+                                <div class="spectrum-bar"></div>
+                                <div class="spectrum-bar"></div>
+                                <div class="spectrum-bar"></div>
+                                <div class="spectrum-bar"></div>
+                                <div class="spectrum-bar"></div>
+                                <div class="spectrum-bar"></div>
+                                <div class="spectrum-bar"></div>
+                                <div class="spectrum-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="urgency-badge">72 HOURS ONLY</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- YouTube Banner - Professional Aspiration -->
+    <div class="banner-container">
+        <h2 class="banner-title">YouTube Channel Art - "Pro Sound" Campaign</h2>
+        <div class="preview-container">
+            <div class="banner youtube-banner">
+                <div class="hero-banner" style="background: linear-gradient(135deg, #0a0a1f 0%, #1a1a2e 50%, #0a0a1f 100%);">
+                    <div style="position: absolute; width: 150%; height: 150%; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at 30% 50%, rgba(102, 126, 234, 0.2) 0%, transparent 50%), radial-gradient(circle at 70% 50%, rgba(255, 67, 101, 0.2) 0%, transparent 50%); filter: blur(100px);"></div>
+                    
+                    <div style="text-align: center; position: relative; z-index: 10;">
+                        <p style="font-size: 2rem; opacity: 0.6; margin-bottom: 1rem;">THE PLUGINS THAT CHANGED EVERYTHING</p>
+                        <h1 class="power-headline" style="font-size: 8rem; margin-bottom: 2rem;">
+                            YOUR MUSIC<br/>
+                            DESERVES THIS
+                        </h1>
+                        <p style="font-size: 2.5rem; font-weight: 300; margin-bottom: 3rem;">
+                            Join Grammy winners who switched to visual control
+                        </p>
+                        <div style="font-size: 3rem; font-weight: 900; color: #ff4365;">
+                            LAUNCH WEEK: SAVE $30
+                        </div>
+                    </div>
+                    
+                    <div class="social-proof" style="left: 50%; transform: translateX(-50%); bottom: 4rem;">
+                        <span class="stars">★★★★★</span>
+                        <span>"Game changer" - Music Tech Magazine</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Instagram Post - FOMO Campaign -->
+    <div class="banner-container">
+        <h2 class="banner-title">Instagram Post - "Missing Out" Campaign</h2>
+        <div class="preview-container">
+            <div class="banner instagram-post">
+                <div class="hero-banner" style="flex-direction: column; padding: 3rem; background: linear-gradient(to bottom, #ff4365 0%, #1a1a2e 50%, #000 100%);">
+                    <div style="position: absolute; top: 2rem; left: 2rem; right: 2rem; text-align: center;">
+                        <div style="background: #000; color: #fff; padding: 1rem 2rem; display: inline-block; font-weight: 900; font-size: 1.5rem; transform: rotate(-2deg);">
+                            3,847 PRODUCERS UPGRADED TODAY
+                        </div>
+                    </div>
+                    
+                    <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; margin-top: 4rem;">
+                        <h2 class="power-headline" style="font-size: 4rem; margin-bottom: 2rem;">
+                            WHILE YOU'RE<br/>
+                            READING THIS<br/>
+                            THEY'RE<br/>
+                            CREATING
+                        </h2>
+                        
+                        <div style="background: rgba(0,0,0,0.5); padding: 2rem; border-radius: 20px; margin: 2rem 0;">
+                            <p style="font-size: 1.5rem; margin-bottom: 1rem;">Your competition just discovered:</p>
+                            <ul style="text-align: left; font-size: 1.2rem; list-style: none;">
+                                <li style="margin: 0.5rem 0;">✓ EQ that shows what it sounds like</li>
+                                <li style="margin: 0.5rem 0;">✓ Compression you can finally understand</li>
+                                <li style="margin: 0.5rem 0;">✓ The secret the pros don't want you to know</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="margin-top: 2rem;">
+                            <p style="font-size: 3rem; font-weight: 900; color: #ffd700; margin-bottom: 1rem;">
+                                $35 TODAY ONLY
+                            </p>
+                            <p style="font-size: 1.2rem; opacity: 0.8;">
+                                Tomorrow: $50 (if still available)
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div style="position: absolute; bottom: 2rem; left: 2rem; right: 2rem; text-align: center;">
+                        <p style="font-size: 1.5rem; font-weight: 700;">
+                            SWIPE UP BEFORE IT'S GONE
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Instagram Story - Transformation -->
+    <div class="banner-container">
+        <h2 class="banner-title">Instagram Story - "Before/After" Campaign</h2>
+        <div class="preview-container">
+            <div class="banner instagram-story">
+                <div class="hero-banner" style="flex-direction: column; padding: 0; background: #000;">
+                    <!-- Before Section -->
+                    <div style="flex: 1; background: #1a1a1a; display: flex; flex-direction: column; justify-content: center; padding: 3rem; position: relative;">
+                        <h3 style="font-size: 2rem; opacity: 0.5; margin-bottom: 1rem;">BEFORE</h3>
+                        <p style="font-size: 3rem; font-weight: 900; line-height: 1.1;">
+                            ENDLESS<br/>
+                            KNOB<br/>
+                            TWEAKING
+                        </p>
+                        <p style="font-size: 1.2rem; margin-top: 1rem; opacity: 0.7;">
+                            Still sounds amateur
+                        </p>
+                        
+                        <div style="position: absolute; right: 2rem; top: 50%; transform: translateY(-50%); font-size: 4rem; opacity: 0.3;">
+                            😩
+                        </div>
+                    </div>
+                    
+                    <!-- Divider -->
+                    <div style="height: 4px; background: linear-gradient(to right, #ff4365 0%, #667eea 100%); position: relative; z-index: 20;">
+                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #000; padding: 1rem 2rem; font-weight: 900; font-size: 1.2rem;">
+                            ONE PLUGIN LATER
+                        </div>
+                    </div>
+                    
+                    <!-- After Section -->
+                    <div style="flex: 1; background: linear-gradient(135deg, #1a1a2e 0%, #2d1b3d 100%); display: flex; flex-direction: column; justify-content: center; padding: 3rem; position: relative;">
+                        <h3 style="font-size: 2rem; color: #ffd700; margin-bottom: 1rem;">AFTER</h3>
+                        <p style="font-size: 3rem; font-weight: 900; line-height: 1.1; background: linear-gradient(135deg, #ff4365 0%, #667eea 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                            INSTANT<br/>
+                            PRO<br/>
+                            SOUND
+                        </p>
+                        <p style="font-size: 1.2rem; margin-top: 1rem; color: #38f9d7;">
+                            "How did you do that?!"
+                        </p>
+                        
+                        <div style="position: absolute; right: 2rem; top: 50%; transform: translateY(-50%); font-size: 4rem;">
+                            🔥
+                        </div>
+                    </div>
+                    
+                    <!-- CTA -->
+                    <div style="background: #ff4365; padding: 3rem; text-align: center;">
+                        <p style="font-size: 2.5rem; font-weight: 900; margin-bottom: 1rem;">
+                            GET THE SECRET
+                        </p>
+                        <p style="font-size: 1.5rem;">
+                            $35 (Save $15 Today)
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Alternative Facebook Banner - Social Proof -->
+    <div class="banner-container">
+        <h2 class="banner-title">Facebook Cover - "Industry Standard" Campaign</h2>
+        <div class="preview-container">
+            <div class="banner facebook-banner">
+                <div class="hero-banner" style="background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><defs><pattern id=\"grid\" width=\"10\" height=\"10\" patternUnits=\"userSpaceOnUse\"><path d=\"M 10 0 L 0 0 0 10\" fill=\"none\" stroke=\"rgba(255,255,255,0.03)\" stroke-width=\"0.5\"/></pattern></defs><rect width=\"100\" height=\"100\" fill=\"url(%23grid)\" /></svg>'), #0a0a0f;">
+                    <div style="position: absolute; left: 5%; top: 50%; transform: translateY(-50%); max-width: 60%;">
+                        <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                            <span style="color: #ffd700;">★★★★★</span>
+                            <span style="opacity: 0.7;">Trusted by 10,000+ producers</span>
+                        </div>
+                        <h2 class="power-headline" style="font-size: 2.5rem; margin-bottom: 1rem;">
+                            "THE ONLY PLUGINS<br/>
+                            I ACTUALLY UNDERSTAND"
+                        </h2>
+                        <p style="font-size: 1.1rem; opacity: 0.8; font-style: italic; margin-bottom: 2rem;">
+                            - Jake Morrison, Grammy-nominated producer
+                        </p>
+                        <div style="display: flex; gap: 2rem; align-items: center;">
+                            <a href="#" class="cta-button" style="background: linear-gradient(135deg, #38f9d7 0%, #00b4d8 100%); color: #000;">
+                                JOIN THE REVOLUTION
+                            </a>
+                            <span style="font-size: 1.5rem; font-weight: 700; color: #ff4365;">
+                                $35 TODAY
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div style="position: absolute; right: 2rem; top: 2rem; background: #ff0000; color: white; padding: 0.5rem 1rem; font-weight: 700; transform: rotate(12deg);">
+                        48 HOURS LEFT
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div style="margin-top: 4rem; padding: 2rem; background: rgba(255,255,255,0.05); border-radius: 10px;">
+        <h3 style="margin-bottom: 1rem;">Key Improvements:</h3>
+        <ul style="line-height: 2;">
+            <li><strong>Emotional Headlines:</strong> "Stop Fighting Your Plugins", "Your Music Deserves This"</li>
+            <li><strong>FOMO Triggers:</strong> "3,847 Producers Upgraded Today", countdown timers</li>
+            <li><strong>Social Proof:</strong> Grammy winners, 5-star reviews, testimonials</li>
+            <li><strong>Visual Impact:</strong> Animated spectrum analyzers, energy bursts, bold typography</li>
+            <li><strong>Clear Value:</strong> Focus on transformation, not features</li>
+            <li><strong>Urgency:</strong> "72 Hours Only", "Tomorrow: $50"</li>
+            <li><strong>Curiosity Gaps:</strong> "The secret the pros don't want you to know"</li>
+        </ul>
+        
+        <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Psychology Used:</h3>
+        <ul style="line-height: 2;">
+            <li><strong>Loss Aversion:</strong> "While you're reading this, they're creating"</li>
+            <li><strong>Transformation Promise:</strong> Before/After comparison</li>
+            <li><strong>Authority:</strong> Industry endorsements, magazine quotes</li>
+            <li><strong>Scarcity:</strong> Limited time pricing, "if still available"</li>
+            <li><strong>Belonging:</strong> "Join Grammy winners who switched"</li>
+        </ul>
+    </div>
+</body>
+</html>

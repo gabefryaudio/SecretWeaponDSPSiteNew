@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUT Compressor GUI Mockup</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #222;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .snapshot-button {
+            background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0, 180, 216, 0.4);
+            transition: all 0.3s;
+        }
+        
+        .snapshot-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 180, 216, 0.6);
+        }
+        
+        #plugin-container {
+            width: 900px;
+            height: 600px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #0a0a0a 100%);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .plugin-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .plugin-title {
+            font-size: 24px;
+            font-weight: 300;
+            margin: 0;
+            background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+        
+        .plugin-content {
+            display: flex;
+            gap: 20px;
+            flex: 1;
+        }
+        
+        .control-panel {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .curve-panel {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .control-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .control-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.8);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .control-value {
+            color: #00b4d8;
+            font-weight: 600;
+        }
+        
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            outline: none;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #00b4d8;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 180, 216, 0.4);
+        }
+        
+        .preset-selector {
+            width: 100%;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: white;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        
+        .curve-switcher {
+            display: flex;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 25px;
+            padding: 4px;
+            margin-bottom: 20px;
+        }
+        
+        .switcher-btn {
+            padding: 8px 20px;
+            background: transparent;
+            border: none;
+            border-radius: 20px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .switcher-btn.active {
+            background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%);
+            color: white;
+            box-shadow: 0 2px 8px rgba(0, 180, 216, 0.4);
+        }
+        
+        .curve-display {
+            flex: 1;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .curve-grid {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        
+        .curve-line {
+            position: absolute;
+            inset: 20px;
+        }
+        
+        .curve-svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .curve-path {
+            fill: none;
+            stroke: #00b4d8;
+            stroke-width: 3;
+            filter: drop-shadow(0 0 10px rgba(0, 180, 216, 0.5));
+        }
+        
+        .curve-point {
+            fill: #00b4d8;
+            stroke: white;
+            stroke-width: 2;
+            cursor: pointer;
+            filter: drop-shadow(0 0 8px rgba(0, 180, 216, 0.8));
+        }
+        
+        .meter-section {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+        }
+        
+        .meter-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .meter-label {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .meter-value {
+            font-size: 12px;
+            font-weight: 600;
+            color: #00b4d8;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .reset-button {
+            background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            padding: 10px 20px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+        }
+        
+        .reset-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 180, 216, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <button class="snapshot-button" onclick="takeSnapshot()">Take Snapshot</button>
+    
+    <div id="plugin-container">
+        <div class="plugin-header">
+            <h1 class="plugin-title">LUT Compressor</h1>
+        </div>
+        
+        <div class="plugin-content">
+            <div class="control-panel">
+                <div class="control-section">
+                    <select class="preset-selector">
+                        <option>Linear (No Compression)</option>
+                        <option selected>Gentle 2:1</option>
+                        <option>Classic 4:1</option>
+                        <option>Snare Natural Punch</option>
+                        <option>Drum Smash</option>
+                        <option>Vocal Leveler</option>
+                        <option>Mix Bus Glue</option>
+                    </select>
+                </div>
+                
+                <div class="control-section">
+                    <div class="control-group">
+                        <label class="control-label">
+                            <span>Input Gain</span>
+                            <span class="control-value">0.0 dB</span>
+                        </label>
+                        <input type="range" class="slider" min="-24" max="24" value="0">
+                    </div>
+                    
+                    <div class="control-group">
+                        <label class="control-label">
+                            <span>Attack</span>
+                            <span class="control-value">10.0 ms</span>
+                        </label>
+                        <input type="range" class="slider" min="0.1" max="100" value="10">
+                    </div>
+                    
+                    <div class="control-group">
+                        <label class="control-label">
+                            <span>Release</span>
+                            <span class="control-value">100 ms</span>
+                        </label>
+                        <input type="range" class="slider" min="1" max="1000" value="100">
+                    </div>
+                    
+                    <div class="control-group">
+                        <label class="control-label">
+                            <span>Attack Depth</span>
+                            <span class="control-value">0.0</span>
+                        </label>
+                        <input type="range" class="slider" min="-2" max="2" value="0">
+                    </div>
+                    
+                    <div class="control-group">
+                        <label class="control-label">
+                            <span>Release Depth</span>
+                            <span class="control-value">0.0</span>
+                        </label>
+                        <input type="range" class="slider" min="-2" max="2" value="0">
+                    </div>
+                    
+                    <div class="control-group">
+                        <label class="control-label">
+                            <span>Makeup Gain</span>
+                            <span class="control-value">0.0 dB</span>
+                        </label>
+                        <input type="range" class="slider" min="-24" max="24" value="0">
+                    </div>
+                    
+                    <div class="control-group">
+                        <label class="control-label">
+                            <span>Mix</span>
+                            <span class="control-value">100%</span>
+                        </label>
+                        <input type="range" class="slider" min="0" max="100" value="100">
+                    </div>
+                    
+                    <div class="control-group">
+                        <label class="control-label">
+                            <span>Waveshaper Mix</span>
+                            <span class="control-value">0%</span>
+                        </label>
+                        <input type="range" class="slider" min="0" max="100" value="0">
+                    </div>
+                </div>
+                
+                <div class="meter-section">
+                    <div class="meter-group">
+                        <span class="meter-label">Envelope</span>
+                        <span class="meter-value">-32.5 dB</span>
+                    </div>
+                    <div class="meter-group">
+                        <span class="meter-label">Gain Reduction</span>
+                        <span class="meter-value">-3.2 dB</span>
+                    </div>
+                    <div class="meter-group">
+                        <span class="meter-label">Output Level</span>
+                        <span class="meter-value">-12.1 dB</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="curve-panel">
+                <div class="curve-switcher">
+                    <button class="switcher-btn active">Compression</button>
+                    <button class="switcher-btn">Waveshaper</button>
+                </div>
+                
+                <div class="curve-display">
+                    <div class="curve-grid"></div>
+                    <div class="curve-line">
+                        <svg class="curve-svg" viewBox="0 0 400 300">
+                            <!-- Compression curve with 2:1 ratio -->
+                            <path class="curve-path" d="M 20,280 Q 100,200 150,150 T 250,100 T 350,50 T 380,20"/>
+                            
+                            <!-- Control points -->
+                            <circle class="curve-point" cx="20" cy="280" r="8"/>
+                            <circle class="curve-point" cx="100" cy="200" r="8"/>
+                            <circle class="curve-point" cx="150" cy="150" r="8"/>
+                            <circle class="curve-point" cx="200" cy="120" r="8"/>
+                            <circle class="curve-point" cx="250" cy="100" r="8"/>
+                            <circle class="curve-point" cx="300" cy="70" r="8"/>
+                            <circle class="curve-point" cx="350" cy="50" r="8"/>
+                            <circle class="curve-point" cx="380" cy="20" r="8"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <button class="reset-button">Reset Curve</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function takeSnapshot() {
+            const element = document.getElementById('plugin-container');
+            
+            html2canvas(element, {
+                backgroundColor: null,
+                scale: 2, // Higher quality
+                logging: false
+            }).then(canvas => {
+                // Create download link
+                const link = document.createElement('a');
+                link.download = 'lut-compressor-gui.png';
+                link.href = canvas.toDataURL();
+                link.click();
+            });
+        }
+        
+        // Update slider values
+        document.querySelectorAll('.slider').forEach(slider => {
+            slider.addEventListener('input', function() {
+                const label = this.parentElement.querySelector('.control-value');
+                const labelText = this.parentElement.querySelector('.control-label span').textContent;
+                
+                let value = this.value;
+                let suffix = '';
+                
+                if (labelText.includes('Gain')) {
+                    suffix = ' dB';
+                } else if (labelText === 'Attack' || labelText === 'Release') {
+                    suffix = ' ms';
+                } else if (labelText === 'Mix' || labelText === 'Waveshaper Mix') {
+                    suffix = '%';
+                }
+                
+                if (labelText === 'Attack' || labelText === 'Release') {
+                    value = parseFloat(value).toFixed(1);
+                } else if (labelText.includes('Depth')) {
+                    value = parseFloat(value).toFixed(1);
+                } else if (labelText.includes('Gain')) {
+                    value = parseFloat(value).toFixed(1);
+                }
+                
+                label.textContent = value + suffix;
+            });
+        });
+        
+        // Curve switcher
+        document.querySelectorAll('.switcher-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.switcher-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

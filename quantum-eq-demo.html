@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum EQ Demo - Secret Weapon DSP</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #000;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        #pluginContainer {
+            width: 1200px;
+            height: 600px;
+            background: #0a0a0f;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .error {
+            color: #ff4365;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <h1>Quantum EQ Demo</h1>
+    
+    <div id="pluginContainer">
+        <div class="loading">Loading Quantum EQ...</div>
+    </div>
+    
+    <div class="controls">
+        <button id="startAudio">Start Audio Context</button>
+        <button id="connectMic">Connect Microphone</button>
+    </div>
+    
+    <script type="module">
+        let audioContext;
+        let patchConnection;
+        let micStream;
+        let micSource;
+        let QuantumEQ;
+        let createPatchView;
+        
+        // Load modules dynamically
+        async function loadModules() {
+            try {
+                console.log('Loading Quantum EQ modules...');
+                const quantumModule = await import("./WASM/Quantum EQ 1.0/cmaj_Quantum_EQ.js");
+                QuantumEQ = quantumModule;
+                
+                const guiModule = await import("./WASM/Quantum EQ 1.0/QuantumEQ_GUI_Complete_With_FFT.js");
+                createPatchView = guiModule.default;
+                
+                console.log('Modules loaded successfully');
+                return true;
+            } catch (error) {
+                console.error('Error loading modules:', error);
+                return false;
+            }
+        }
+        
+        async function initializePlugin() {
+            try {
+                console.log('Initializing Quantum EQ...');
+                
+                // Load modules if not already loaded
+                if (!QuantumEQ || !createPatchView) {
+                    const loaded = await loadModules();
+                    if (!loaded) {
+                        throw new Error('Failed to load modules');
+                    }
+                }
+                
+                // Create audio context
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                console.log('Audio context created:', audioContext);
+                
+                // Create the patch connection
+                patchConnection = await QuantumEQ.createAudioWorkletNodePatchConnection(
+                    audioContext, 
+                    "QuantumEQ"
+                );
+                
+                console.log('Patch connection created:', patchConnection);
+                
+                // Create the GUI
+                const container = document.getElementById('pluginContainer');
+                container.innerHTML = ''; // Clear loading message
+                
+                const gui = createPatchView(patchConnection);
+                container.appendChild(gui);
+                
+                // Connect to audio output
+                patchConnection.audioNode.connect(audioContext.destination);
+                
+                console.log('Quantum EQ initialized successfully');
+                
+            } catch (error) {
+                console.error('Error initializing Quantum EQ:', error);
+                document.getElementById('pluginContainer').innerHTML = 
+                    '<div class="error">Error loading plugin: ' + error.message + '<br><br>Check console for details.</div>';
+            }
+        }
+        
+        // Start button handler
+        document.getElementById('startAudio').addEventListener('click', async () => {
+            if (!audioContext) {
+                await initializePlugin();
+            } else if (audioContext.state === 'suspended') {
+                await audioContext.resume();
+            }
+        });
+        
+        // Microphone button handler
+        document.getElementById('connectMic').addEventListener('click', async () => {
+            if (!audioContext || !patchConnection) {
+                alert('Please start the audio context first');
+                return;
+            }
+            
+            try {
+                if (micStream) {
+                    // Disconnect existing mic
+                    micSource.disconnect();
+                    micStream.getTracks().forEach(track => track.stop());
+                    micStream = null;
+                    micSource = null;
+                    document.getElementById('connectMic').textContent = 'Connect Microphone';
+                } else {
+                    // Connect mic
+                    micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    micSource = audioContext.createMediaStreamSource(micStream);
+                    micSource.connect(patchConnection.audioNode);
+                    document.getElementById('connectMic').textContent = 'Disconnect Microphone';
+                }
+            } catch (error) {
+                console.error('Error accessing microphone:', error);
+                alert('Could not access microphone: ' + error.message);
+            }
+        });
+        
+        // Auto-initialize if user interacts with the page
+        document.addEventListener('click', async () => {
+            if (!audioContext && !document.getElementById('pluginContainer').querySelector('.error')) {
+                await initializePlugin();
+            }
+        }, { once: true });
+    </script>
+</body>
+</html>

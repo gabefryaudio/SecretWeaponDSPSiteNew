@@ -1,0 +1,121 @@
+<section class="hero-section">
+  <div class="hero-badge">
+    <i class="fas fa-sparkles"></i>
+    {{ section.settings.badge_text }}
+  </div>
+  
+  <h1 class="hero-title">
+    {% if section.settings.title_line1 != blank %}
+      {{ section.settings.title_line1 }}
+    {% endif %}
+    {% if section.settings.title_gradient != blank %}
+      <span class="gradient-text">{{ section.settings.title_gradient }}</span>
+    {% endif %}
+    {% if section.settings.title_line2 != blank %}
+      <br>{{ section.settings.title_line2 }}
+    {% endif %}
+  </h1>
+  
+  {% if section.settings.description != blank %}
+    <p class="hero-description">{{ section.settings.description }}</p>
+  {% endif %}
+  
+  <div class="hero-buttons">
+    {% if section.settings.button_1_text != blank %}
+      <a href="{{ section.settings.button_1_link }}" class="btn btn-primary">
+        {% if section.settings.button_1_icon != blank %}
+          <i class="{{ section.settings.button_1_icon }}"></i>
+        {% endif %}
+        {{ section.settings.button_1_text }}
+      </a>
+    {% endif %}
+    
+    {% if section.settings.button_2_text != blank %}
+      <a href="{{ section.settings.button_2_link }}" class="btn btn-secondary">
+        {% if section.settings.button_2_icon != blank %}
+          <i class="{{ section.settings.button_2_icon }}"></i>
+        {% endif %}
+        {{ section.settings.button_2_text }}
+      </a>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Hero Banner",
+  "settings": [
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Badge Text",
+      "default": "Professional Audio Processing"
+    },
+    {
+      "type": "text",
+      "id": "title_line1",
+      "label": "Title Line 1",
+      "default": "The"
+    },
+    {
+      "type": "text",
+      "id": "title_gradient",
+      "label": "Title Gradient Text",
+      "default": "Secret Weapon"
+    },
+    {
+      "type": "text",
+      "id": "title_line2",
+      "label": "Title Line 2",
+      "default": "For Your Mix"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Cutting-edge audio plugins that bring analog warmth and digital precision to your productions. Designed by engineers, crafted for artists."
+    },
+    {
+      "type": "text",
+      "id": "button_1_text",
+      "label": "Button 1 Text",
+      "default": "Shop Plugins"
+    },
+    {
+      "type": "url",
+      "id": "button_1_link",
+      "label": "Button 1 Link"
+    },
+    {
+      "type": "text",
+      "id": "button_1_icon",
+      "label": "Button 1 Icon Class",
+      "default": "fas fa-rocket",
+      "info": "Font Awesome icon class"
+    },
+    {
+      "type": "text",
+      "id": "button_2_text",
+      "label": "Button 2 Text",
+      "default": "Try Demo"
+    },
+    {
+      "type": "url",
+      "id": "button_2_link",
+      "label": "Button 2 Link"
+    },
+    {
+      "type": "text",
+      "id": "button_2_icon",
+      "label": "Button 2 Icon Class",
+      "default": "fas fa-play",
+      "info": "Font Awesome icon class"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Banner"
+    }
+  ]
+}
+{% endschema %}

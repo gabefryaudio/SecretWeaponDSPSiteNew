@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum EQ GUI Mockup</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #222;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .snapshot-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s;
+        }
+        
+        .snapshot-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        #plugin-container {
+            width: 1200px;
+            height: 700px;
+            background: radial-gradient(ellipse at center, #1a1a2e 0%, #0f0f0f 50%, #000000 100%);
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .plugin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            background: rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .plugin-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin: 0;
+            color: #fff;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .plugin-logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+            color: white;
+        }
+        
+        .header-controls {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .gain-control {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .gain-label {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+        
+        .gain-knob {
+            width: 48px;
+            height: 48px;
+            background: radial-gradient(circle at 40% 40%, #2a2a3a, #0a0a0a);
+            border-radius: 50%;
+            position: relative;
+            box-shadow: 
+                0 8px 16px rgba(0, 0, 0, 0.4),
+                inset 0 -2px 8px rgba(0, 0, 0, 0.8),
+                inset 0 2px 4px rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+        }
+        
+        .gain-knob::before {
+            content: '';
+            position: absolute;
+            inset: 4px;
+            background: radial-gradient(circle at 40% 40%, #1a1a2a, #000);
+            border-radius: 50%;
+        }
+        
+        .gain-knob::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 18px;
+            background: linear-gradient(to bottom, #667eea, #764ba2);
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+            box-shadow: 0 0 8px rgba(102, 126, 234, 0.6);
+        }
+        
+        .gain-value {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+        }
+        
+        .bypass-button {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .bypass-button::before {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #ff4444;
+            border-radius: 50%;
+            top: 50%;
+            left: 10px;
+            transform: translateY(-50%);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        .bypass-button.active {
+            background: rgba(255, 68, 68, 0.1);
+            border-color: rgba(255, 68, 68, 0.3);
+            color: #ff4444;
+            padding-left: 30px;
+        }
+        
+        .bypass-button.active::before {
+            opacity: 1;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            padding: 20px;
+            gap: 15px;
+        }
+        
+        .spectrum-panel {
+            flex: 1;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8));
+            border-radius: 8px;
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .spectrum-display {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background: #000;
+            overflow: hidden;
+        }
+        
+        .spectrum-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .band-strip {
+            height: 60px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            gap: 0;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .band-item {
+            flex: 1;
+            height: 100%;
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .band-item:last-child {
+            border-right: none;
+        }
+        
+        .band-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .band-item.active {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .band-number {
+            font-size: 14px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.6);
+            transition: all 0.2s;
+        }
+        
+        .band-item.active .band-number {
+            color: #fff;
+            transform: scale(1.1);
+        }
+        
+        .band-indicator {
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            opacity: 0;
+            transition: all 0.2s;
+        }
+        
+        .band-item.active .band-indicator {
+            opacity: 1;
+        }
+        
+        .properties-panel {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .property-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .property-label {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+        
+        .property-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+        }
+        
+        .filter-type-selector {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            color: #fff;
+            padding: 8px 12px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            background-size: 16px;
+            padding-right: 32px;
+        }
+        
+        .property-knob {
+            width: 48px;
+            height: 48px;
+            background: radial-gradient(circle at 40% 40%, #2a2a3a, #0a0a0a);
+            border-radius: 50%;
+            position: relative;
+            box-shadow: 
+                0 8px 16px rgba(0, 0, 0, 0.4),
+                inset 0 -2px 8px rgba(0, 0, 0, 0.8),
+                inset 0 2px 4px rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            margin: 8px auto 0;
+        }
+        
+        .property-knob::before {
+            content: '';
+            position: absolute;
+            inset: 4px;
+            background: radial-gradient(circle at 40% 40%, #1a1a2a, #000);
+            border-radius: 50%;
+        }
+        
+        .property-knob::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 18px;
+            background: var(--band-color, #667eea);
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%) rotate(var(--rotation, 0deg));
+            transform-origin: center 16px;
+            border-radius: 2px;
+            box-shadow: 0 0 8px var(--band-color, #667eea);
+        }
+        
+        .slope-buttons {
+            display: flex;
+            gap: 4px;
+            margin-top: 8px;
+        }
+        
+        .slope-button {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+            padding: 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        
+        .slope-button.active {
+            background: var(--band-color, #667eea);
+            border-color: var(--band-color, #667eea);
+            color: #fff;
+        }
+        
+        .toggle-switches {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        
+        .toggle-checkbox {
+            width: 36px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            position: relative;
+            transition: all 0.2s;
+        }
+        
+        .toggle-checkbox::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: all 0.2s;
+        }
+        
+        .toggle-checkbox.active {
+            background: var(--band-color, #667eea);
+        }
+        
+        .toggle-checkbox.active::after {
+            background: #fff;
+            left: 18px;
+        }
+        
+        .toggle-label {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 500;
+        }
+        /* Band colors */
+        .band-1 { --band-color: #667eea; }
+        .band-2 { --band-color: #764ba2; }
+        .band-3 { --band-color: #f093fb; }
+        .band-4 { --band-color: #f5576c; }
+        .band-5 { --band-color: #fa709a; }
+        .band-6 { --band-color: #fee140; }
+        .band-7 { --band-color: #30cfd0; }
+        .band-8 { --band-color: #38f9d7; }
+        .band-9 { --band-color: #00f2fe; }
+        .band-10 { --band-color: #4facfe; }
+    </style>
+</head>
+<body>
+    <button class="snapshot-button" onclick="takeSnapshot()">Take Snapshot</button>
+    
+    <div id="plugin-container">
+        <div class="plugin-header">
+            <div class="plugin-title">
+                <div class="plugin-logo">Q</div>
+                <span>Quantum EQ</span>
+            </div>
+            <div class="header-controls">
+                <div class="gain-control">
+                    <span class="gain-label">Input</span>
+                    <div class="gain-knob"></div>
+                    <span class="gain-value">0.0 dB</span>
+                </div>
+                <div class="gain-control">
+                    <span class="gain-label">Output</span>
+                    <div class="gain-knob"></div>
+                    <span class="gain-value">0.0 dB</span>
+                </div>
+                <button class="bypass-button">Bypass</button>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="spectrum-panel">
+                <div class="spectrum-display">
+                    <canvas class="spectrum-canvas" id="spectrumCanvas"></canvas>
+                </div>
+            </div>
+            
+            <div class="band-strip">
+                <div class="band-item band-1 active" data-band="1">
+                    <div class="band-indicator"></div>
+                    <span class="band-number">1</span>
+                </div>
+                <div class="band-item band-2" data-band="2">
+                    <div class="band-indicator"></div>
+                    <span class="band-number">2</span>
+                </div>
+                <div class="band-item band-3" data-band="3">
+                    <div class="band-indicator"></div>
+                    <span class="band-number">3</span>
+                </div>
+                <div class="band-item band-4" data-band="4">
+                    <div class="band-indicator"></div>
+                    <span class="band-number">4</span>
+                </div>
+                <div class="band-item band-5" data-band="5">
+                    <div class="band-indicator"></div>
+                    <span class="band-number">5</span>
+                </div>
+                <div class="band-item band-6" data-band="6">
+                    <div class="band-indicator"></div>
+                    <span class="band-number">6</span>
+                </div>
+                <div class="band-item band-7" data-band="7">
+                    <div class="band-indicator"></div>
+                    <span class="band-number">7</span>
+                </div>
+                <div class="band-item band-8" data-band="8">
+                    <div class="band-indicator"></div>
+                    <span class="band-number">8</span>
+                </div>
+                <div class="band-item band-9" data-band="9">
+                    <div class="band-indicator"></div>
+                    <span class="band-number">9</span>
+                </div>
+                <div class="band-item band-10" data-band="10">
+                    <div class="band-indicator"></div>
+                    <span class="band-number">10</span>
+                </div>
+            </div>
+            
+            <div class="properties-panel">
+                <div class="property-group">
+                    <label class="property-label">Band 1 Enabled</label>
+                    <select class="filter-type-selector">
+                        <option>Bell</option>
+                        <option>High Shelf</option>
+                        <option>Low Shelf</option>
+                        <option>High Pass</option>
+                        <option>Low Pass</option>
+                        <option>Notch</option>
+                    </select>
+                </div>
+                
+                <div class="property-group">
+                    <label class="property-label">Frequency</label>
+                    <div class="property-value">1.0 kHz</div>
+                    <div class="property-knob band-1" style="--rotation: -30deg;"></div>
+                </div>
+                
+                <div class="property-group">
+                    <label class="property-label">Gain</label>
+                    <div class="property-value">+3.5 dB</div>
+                    <div class="property-knob band-1" style="--rotation: 45deg;"></div>
+                </div>
+                
+                <div class="property-group">
+                    <label class="property-label">Q</label>
+                    <div class="property-value">0.707</div>
+                    <div class="property-knob band-1" style="--rotation: 0deg;"></div>
+                </div>
+                
+                <div class="property-group">
+                    <label class="property-label">Slope</label>
+                    <div class="slope-buttons">
+                        <button class="slope-button">6</button>
+                        <button class="slope-button active band-1">12</button>
+                        <button class="slope-button">18</button>
+                        <button class="slope-button">24</button>
+                    </div>
+                </div>
+                
+                <div class="property-group">
+                    <label class="property-label">Options</label>
+                    <div class="toggle-switches">
+                        <div class="toggle-switch">
+                            <div class="toggle-checkbox"></div>
+                            <span class="toggle-label">Proportional Q</span>
+                        </div>
+                        <div class="toggle-switch">
+                            <div class="toggle-checkbox active band-1"></div>
+                            <span class="toggle-label">Asymmetric</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function takeSnapshot() {
+            const element = document.getElementById('plugin-container');
+            
+            html2canvas(element, {
+                backgroundColor: null,
+                scale: 2,
+                logging: false
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'quantum-eq-gui.png';
+                link.href = canvas.toDataURL();
+                link.click();
+            });
+        }
+        
+        // Initialize canvas
+        const canvas = document.getElementById('spectrumCanvas');
+        const ctx = canvas.getContext('2d');
+        let animationFrame;
+        
+        function resizeCanvas() {
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        
+        // Band colors
+        const bandColors = [
+            '#667eea', '#764ba2', '#f093fb', '#f5576c', '#fa709a',
+            '#fee140', '#30cfd0', '#38f9d7', '#00f2fe', '#4facfe'
+        ];
+        
+        // Draw spectrum analyzer and EQ curves
+        function drawSpectrum() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw grid
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+            ctx.lineWidth = 1;
+            
+            // Vertical lines (frequency)
+            const freqLines = [20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000];
+            freqLines.forEach(freq => {
+                const x = freqToX(freq);
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            });
+            
+            // Horizontal lines (dB)
+            for (let db = -60; db <= 20; db += 10) {
+                const y = dbToY(db);
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+            
+            // Draw frequency labels
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+            ctx.font = '10px Inter';
+            ctx.textAlign = 'center';
+            freqLines.forEach(freq => {
+                const x = freqToX(freq);
+                const label = freq >= 1000 ? `${freq/1000}k` : freq;
+                ctx.fillText(label, x, canvas.height - 5);
+            });
+            
+            // Draw dB labels
+            ctx.textAlign = 'left';
+            for (let db = -60; db <= 20; db += 20) {
+                const y = dbToY(db);
+                ctx.fillText(`${db > 0 ? '+' : ''}${db}dB`, 5, y - 5);
+            }
+            
+            // Draw animated FFT spectrum
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, 'rgba(102, 126, 234, 0.3)');
+            gradient.addColorStop(1, 'rgba(102, 126, 234, 0)');
+            
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height);
+            
+            for (let x = 0; x < canvas.width; x += 2) {
+                const freq = xToFreq(x);
+                const noise = Math.random() * 20;
+                const wave1 = Math.sin(Date.now() * 0.001 + x * 0.01) * 15;
+                const wave2 = Math.sin(Date.now() * 0.0005 + x * 0.005) * 10;
+                const amplitude = -40 + noise + wave1 + wave2;
+                const y = dbToY(amplitude);
+                ctx.lineTo(x, y);
+            }
+            
+            ctx.lineTo(canvas.width, canvas.height);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Draw EQ response curves
+            drawEQCurves();
+            
+            animationFrame = requestAnimationFrame(drawSpectrum);
+        }
+        
+        function drawEQCurves() {
+            // Composite EQ curve
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            
+            for (let x = 0; x < canvas.width; x++) {
+                const freq = xToFreq(x);
+                let totalGain = 0;
+                
+                // Simulate 3 active bands
+                totalGain += bellFilter(freq, 1000, 3.5, 0.7);
+                totalGain += bellFilter(freq, 250, -2, 1.2);
+                totalGain += highShelfFilter(freq, 8000, 2, 0.7);
+                
+                const y = dbToY(totalGain);
+                if (x === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+            
+            // Draw control points
+            const points = [
+                { freq: 1000, gain: 3.5, color: bandColors[0] },
+                { freq: 250, gain: -2, color: bandColors[1] },
+                { freq: 8000, gain: 2, color: bandColors[2] }
+            ];
+            
+            points.forEach(point => {
+                const x = freqToX(point.freq);
+                const y = dbToY(point.gain);
+                
+                ctx.fillStyle = point.color;
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                
+                ctx.beginPath();
+                ctx.arc(x, y, 8, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+            });
+        }
+        
+        // Helper functions
+        function freqToX(freq) {
+            const minLog = Math.log10(20);
+            const maxLog = Math.log10(20000);
+            const freqLog = Math.log10(freq);
+            return ((freqLog - minLog) / (maxLog - minLog)) * canvas.width;
+        }
+        
+        function xToFreq(x) {
+            const minLog = Math.log10(20);
+            const maxLog = Math.log10(20000);
+            const ratio = x / canvas.width;
+            return Math.pow(10, minLog + ratio * (maxLog - minLog));
+        }
+        
+        function dbToY(db) {
+            const minDB = -60;
+            const maxDB = 20;
+            return ((maxDB - db) / (maxDB - minDB)) * canvas.height;
+        }
+        
+        function bellFilter(freq, centerFreq, gain, q) {
+            const omega = 2 * Math.PI * freq / 48000;
+            const omega0 = 2 * Math.PI * centerFreq / 48000;
+            const alpha = Math.sin(omega0) / (2 * q);
+            const A = Math.pow(10, gain / 40);
+            
+            const b0 = 1 + alpha * A;
+            const b1 = -2 * Math.cos(omega0);
+            const b2 = 1 - alpha * A;
+            const a0 = 1 + alpha / A;
+            const a1 = -2 * Math.cos(omega0);
+            const a2 = 1 - alpha / A;
+            
+            const w = Math.exp(-1j * omega);
+            const num = b0 + b1 * w + b2 * w * w;
+            const den = a0 + a1 * w + a2 * w * w;
+            
+            return gain * Math.abs(Math.cos(omega - omega0)) / (1 + Math.pow((freq - centerFreq) / (centerFreq / q), 2));
+        }
+        
+        function highShelfFilter(freq, centerFreq, gain, q) {
+            if (freq > centerFreq) return gain;
+            return gain * freq / centerFreq;
+        }
+        
+        // Band strip interactions
+        document.querySelectorAll('.band-item').forEach((item, index) => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.band-item').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Update band indicator color
+                const indicator = this.querySelector('.band-indicator');
+                indicator.style.background = bandColors[index];
+                
+                // Update property panel
+                document.querySelector('.properties-panel .property-label').textContent = `Band ${index + 1} Enabled`;
+                document.querySelectorAll('.property-knob').forEach(knob => {
+                    knob.className = `property-knob band-${index + 1}`;
+                });
+                document.querySelectorAll('.slope-button.active, .toggle-checkbox.active').forEach(el => {
+                    el.className = el.className.replace(/band-\d+/, `band-${index + 1}`);
+                });
+            });
+        });
+        
+        // Initialize band indicators
+        document.querySelectorAll('.band-item').forEach((item, index) => {
+            const indicator = item.querySelector('.band-indicator');
+            indicator.style.background = bandColors[index];
+        });
+        
+        // Toggle switches
+        document.querySelectorAll('.toggle-switch').forEach(sw => {
+            sw.addEventListener('click', function() {
+                const checkbox = this.querySelector('.toggle-checkbox');
+                checkbox.classList.toggle('active');
+            });
+        });
+        
+        // Slope buttons
+        document.querySelectorAll('.slope-button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.slope-button').forEach(b => {
+                    b.classList.remove('active');
+                    b.classList.remove(...Array.from(b.classList).filter(c => c.startsWith('band-')));
+                });
+                this.classList.add('active');
+                const activeBand = document.querySelector('.band-item.active');
+                if (activeBand) {
+                    this.classList.add(activeBand.classList[1]);
+                }
+            });
+        });
+        
+        // Bypass button
+        document.querySelector('.bypass-button').addEventListener('click', function() {
+            this.classList.toggle('active');
+        });
+        
+        // Start animation
+        drawSpectrum();
+        
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (animationFrame) cancelAnimationFrame(animationFrame);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support - Secret Weapon DSP</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            --dark-bg: #0a0a0f;
+            --darker-bg: #050507;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --text-primary: rgba(255, 255, 255, 0.95);
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-tertiary: rgba(255, 255, 255, 0.5);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --hover-bg: rgba(255, 255, 255, 0.05);
+            --success-color: #38f9d7;
+            --warning-color: #fee140;
+            --info-color: #00f2fe;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(244, 63, 94, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(240, 147, 251, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+            opacity: 0.6;
+            animation: bgShift 30s ease-in-out infinite;
+            z-index: -1;
+        }
+        
+        @keyframes bgShift {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            33% { transform: scale(1.1) rotate(120deg); }
+            66% { transform: scale(0.9) rotate(240deg); }
+        }
+        
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 15, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        nav.scrolled {
+            background: rgba(5, 5, 7, 0.95);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0.75rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            height: 90px;
+        }
+        
+        .logo img {
+            height: 100%;
+            width: auto;
+            clip-path: inset(0 0 15% 0);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-gradient);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--text-primary);
+        }
+        
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+        
+        /* Page Header */
+        .page-header {
+            padding: 10rem 2rem 4rem;
+            text-align: center;
+            position: relative;
+        }
+        
+        .page-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+        
+        .gradient-text {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .page-description {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+        
+        /* Quick Links */
+        .quick-links {
+            padding: 3rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+        }
+        
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        
+        .link-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .link-card:hover {
+            transform: translateY(-5px);
+            background: var(--hover-bg);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .link-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .link-card:nth-child(1) .link-icon { color: #667eea; }
+        .link-card:nth-child(2) .link-icon { color: #f093fb; }
+        .link-card:nth-child(3) .link-icon { color: #00f2fe; }
+        .link-card:nth-child(4) .link-icon { color: #38f9d7; }
+        
+        .link-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .link-description {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Documentation Section */
+        .documentation {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .doc-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+        
+        .doc-tab {
+            padding: 0.75rem 2rem;
+            background: transparent;
+            border: 2px solid var(--border-color);
+            border-radius: 50px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .doc-tab:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            color: var(--text-primary);
+        }
+        
+        .doc-tab.active {
+            background: var(--primary-gradient);
+            border-color: transparent;
+            color: white;
+        }
+        
+        .doc-content {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 3rem;
+        }
+        
+        .doc-article {
+            display: none;
+        }
+        
+        .doc-article.active {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .doc-article h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+        
+        .doc-article h4 {
+            font-size: 1.25rem;
+            margin: 2rem 0 1rem;
+            color: var(--text-primary);
+        }
+        
+        .doc-article p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+        
+        .doc-article ul,
+        .doc-article ol {
+            margin: 0 0 1.5rem 2rem;
+            color: var(--text-secondary);
+        }
+        
+        .doc-article li {
+            margin-bottom: 0.75rem;
+        }
+        
+        .code-block {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+        }
+        
+        /* FAQ Section */
+        .faq {
+            padding: 4rem 2rem;
+            background: rgba(255, 255, 255, 0.02);
+        }
+        
+        .faq-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .faq-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .faq-item:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+        
+        .faq-question {
+            padding: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .faq-question:hover {
+            background: var(--hover-bg);
+        }
+        
+        .faq-icon {
+            font-size: 1.25rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+        }
+        
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+        }
+        
+        .faq-answer-content {
+            padding: 0 1.5rem 1.5rem;
+            color: var(--text-secondary);
+        }
+        
+        /* System Requirements */
+        .requirements {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .req-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .req-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+        
+        .req-platform {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .platform-icon {
+            font-size: 2rem;
+        }
+        
+        .platform-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .req-list {
+            list-style: none;
+        }
+        
+        .req-list li {
+            padding: 0.5rem 0;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+        
+        .req-list li::before {
+            content: '✓';
+            color: var(--success-color);
+            font-weight: bold;
+            margin-top: 2px;
+        }
+        
+        /* Contact Support */
+        .contact-support {
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+        
+        .support-cta {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 3rem;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(240, 147, 251, 0.1) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+            border: 0;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--hover-bg);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Footer */
+        footer {
+            padding: 4rem 2rem 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+        
+        .social-links a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            transform: translateY(-2px);
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Hamburger Menu */
+        .hamburger {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            position: relative;
+            width: 30px;
+            height: 30px;
+            z-index: 1001;
+        }
+        
+        .hamburger span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background: var(--text-primary);
+            margin: 5px 0;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+        
+        /* Mobile Navigation */
+        .nav-links.mobile-active {
+            display: flex;
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 100vh;
+            background: rgba(10, 10, 15, 0.98);
+            backdrop-filter: blur(20px);
+            flex-direction: column;
+            padding: 6rem 1.5rem 2rem;
+            gap: 1.5rem;
+            align-items: flex-start;
+            box-shadow: -10px 0 40px rgba(0, 0, 0, 0.5);
+            animation: slideIn 0.3s ease;
+            z-index: 999;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+        
+        .nav-links.mobile-active a {
+            font-size: 1.125rem;
+            width: 100%;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        /* Mobile Overlay */
+        .mobile-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 998;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .mobile-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+        
+        /* Mobile */
+        @media (max-width: 768px) {
+            /* Fix nav container padding on mobile */
+            .nav-container {
+                padding: 0.75rem 1rem;
+                max-width: 100%;
+            }
+            
+            /* Ensure logo doesn't push hamburger off screen */
+            .logo {
+                height: 60px;
+                max-width: 200px;
+            }
+            
+            .logo img {
+                height: 100%;
+                width: auto;
+                max-width: 100%;
+            }
+            
+            .hamburger {
+                display: block;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .links-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .doc-tabs {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .doc-tab {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+    
+    <nav id="navbar">
+        <div class="nav-container">
+            <a href="secretweapon-homepage.html" class="logo">
+                <img src="images/secret-weapon-dsp-logo.svg" alt="Secret Weapon DSP">
+            </a>
+            <div class="nav-links">
+                <a href="secretweapon-homepage.html">Home</a>
+                <a href="plugins-overview.html">Plugins</a>
+                <a href="support-page.html" class="active">Support</a>
+                <a href="contact-page.html">Contact</a>
+            </div>
+            <button class="hamburger" id="hamburger" aria-label="Toggle navigation menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+    
+    <section class="page-header">
+        <div class="page-badge">
+            <i class="fas fa-life-ring"></i>
+            Help Center
+        </div>
+        <h1>Support & <span class="gradient-text">Documentation</span></h1>
+        <p class="page-description">
+            Everything you need to get the most out of your Secret Weapon DSP plugins.
+            From quick start guides to advanced techniques.
+        </p>
+    </section>
+    
+    <section class="quick-links">
+        <div class="links-grid">
+            <a href="#docs" class="link-card">
+                <i class="fas fa-book link-icon"></i>
+                <div class="link-title">Documentation</div>
+                <div class="link-description">User manuals and guides</div>
+            </a>
+            <a href="#faq" class="link-card">
+                <i class="fas fa-question-circle link-icon"></i>
+                <div class="link-title">FAQ</div>
+                <div class="link-description">Common questions answered</div>
+            </a>
+            <a href="#requirements" class="link-card">
+                <i class="fas fa-desktop link-icon"></i>
+                <div class="link-title">System Requirements</div>
+                <div class="link-description">Compatibility information</div>
+            </a>
+            <a href="#contact-support" class="link-card">
+                <i class="fas fa-envelope link-icon"></i>
+                <div class="link-title">Contact Support</div>
+                <div class="link-description">Get personalized help</div>
+            </a>
+        </div>
+    </section>
+    
+    <section class="documentation" id="docs">
+        <div class="section-header">
+            <h2>Plugin <span class="gradient-text">Documentation</span></h2>
+            <p style="color: var(--text-secondary);">
+                Comprehensive guides for all our plugins
+            </p>
+        </div>
+        
+        <div class="doc-tabs">
+            <button class="doc-tab active" data-doc="installation">Installation</button>
+            <button class="doc-tab" data-doc="lut-compressor">Canvas Comp</button>
+            <button class="doc-tab" data-doc="quantum-eq">Quantum EQ</button>
+            <button class="doc-tab" data-doc="troubleshooting">Troubleshooting</button>
+        </div>
+        
+        <div class="doc-content">
+            <div class="doc-article active" id="installation">
+                <h3>Installation Guide</h3>
+                <p>Installing Secret Weapon DSP plugins is simple - just copy and paste!</p>
+                
+                <h4>Windows Installation</h4>
+                <ol>
+                    <li>Download your plugin file (ends with .vst3) from your account page</li>
+                    <li>Navigate to your VST3 folder:
+                        <div class="code-block" style="margin: 1rem 0;">
+                            C:\Program Files\Common Files\VST3\
+                        </div>
+                        <p style="margin: 0.5rem 0; font-size: 0.9rem;"><strong>Tip:</strong> You can copy and paste this path into Windows Explorer's address bar</p>
+                    </li>
+                    <li>Copy your downloaded .vst3 file into this folder
+                        <ul style="margin-top: 0.5rem;">
+                            <li>Right-click the .vst3 file and select "Copy"</li>
+                            <li>Right-click inside the VST3 folder and select "Paste"</li>
+                            <li>If prompted for administrator permission, click "Continue"</li>
+                        </ul>
+                    </li>
+                    <li>Launch your DAW and rescan for plugins (usually in Preferences → Plugins)</li>
+                    <li>Your Secret Weapon DSP plugin will appear in your effects list!</li>
+                </ol>
+                
+                <h4>Alternative VST3 Locations</h4>
+                <p>Some DAWs also check these locations:</p>
+                <div class="code-block">
+                    64-bit: C:\Program Files\Common Files\VST3\<br>
+                    32-bit: C:\Program Files (x86)\Common Files\VST3\<br>
+                    User folder: %LOCALAPPDATA%\Programs\Common\VST3\
+                </div>
+                
+                <h4>Platform Support</h4>
+                <p><strong>Note:</strong> Our plugins are currently available for Windows VST3 only.</p>
+            </div>
+            
+            <div class="doc-article" id="lut-compressor">
+                <h3>Canvas Comp Guide</h3>
+                <p>Master the art of lookup table compression with these tips:</p>
+                
+                <h4>Understanding the Interface</h4>
+                <p>The 8-point transfer curve is the heart of Canvas Comp. Each point represents an input/output relationship:</p>
+                <ul>
+                    <li>Drag points vertically to adjust output level</li>
+                    <li>Create custom compression curves</li>
+                    <li>Use presets as starting points</li>
+                    <li>Enable waveshaper for harmonic enhancement</li>
+                </ul>
+                
+                <h4>Key Features</h4>
+                <ul>
+                    <li><strong>Custom Compression Curves:</strong> Draw your own unique compression curve to create custom threshold and ratio settings, giving you complete control over how your signal's dynamics are shaped</li>
+                    <li><strong>Signal-Dependent Timing:</strong> Attack/release adapt to input level for natural dynamic response</li>
+                    <li><strong>Waveshaper Design:</strong> Create your own 8-point waveshaper curve for custom saturation and harmonic coloration, perfect for adding warmth or edge while further sculpting your signal's envelope</li>
+                </ul>
+                
+                <h4>Getting Started with Canvas Comp</h4>
+                <ol>
+                    <li><strong>Start with a preset</strong> - Load a preset that's close to what you want as a starting point</li>
+                    <li><strong>Adjust the input gain</strong> - Turn the input knob until you start hearing the compression working on your signal</li>
+                    <li><strong>Understanding the Compression Curve:</strong>
+                        <ul>
+                            <li><strong>X-Axis (Horizontal) = Input Level:</strong> This represents how loud your incoming signal is. The left side is for quiet sounds (like the tail of a snare), the middle is for moderate levels (like the body of a vocal), and the right side is for loud peaks (like the initial hit of a kick drum)</li>
+                            <li><strong>Y-Axis (Vertical) = Output Level:</strong> This controls what happens to each input level. Pull points down to compress (make loud parts quieter), push points up to expand (make quiet parts louder). A straight diagonal line means no compression</li>
+                            <li><strong>The Magic:</strong> By placing points at different positions, you're telling Canvas Comp exactly how to treat each volume level of your signal - something traditional compressors can't do</li>
+                        </ul>
+                    </li>
+                    <li><strong>Experiment and listen</strong> - Move control points while listening to hear how each position affects your sound. Trial and error is your best teacher!</li>
+                </ol>
+                
+                <p><em>Canvas Comp may take more time than traditional compressors to find your sound initially, but once you understand how it works, you'll be able to shape your tracks in more musical ways that are perfectly tailored to your taste.</em></p>
+                
+                <h4>Understanding the Waveshaper</h4>
+                <p>The waveshaper does two things: shapes your dynamics through clipping AND adds tonal color (warmth, grit, or edge) to your sound:</p>
+                <ul>
+                    <li><strong>What it does:</strong> Think of it as a "tone shaper" that can make your sound warmer, crunchier, or more aggressive</li>
+                    <li><strong>How to use it:</strong> Click the waveshaper button to access the curve. It starts with a straight line (no effect) and the mix at 0%. Turn up the waveshaper mix knob to hear your changes, then pull the line into different shapes while listening:</li>
+                    <li><strong>Common Shapes and Their Sounds:</strong>
+                        <ul>
+                            <li><strong>Gentle S-curves (literally the shape of the letter S)</strong> = Adds warmth and thickness with soft clipping (great for vocals, bass)</li>
+                            <li><strong>Steeper curves (like a reverse letter Z)</strong> = More obvious saturation and presence (perfect for drums, guitars)</li>
+                            <li><strong>Sharp corners or flat-top curves</strong> = Hard clipping for aggressive distortion and bite (for creative effects)</li>
+                            <li><strong>The steeper the curve, the harder the clipping:</strong> Gradual slopes = soft, musical saturation. Sharp angles = hard clipping like a limiter</li>
+                        </ul>
+                    </li>
+                    <li><strong>The Mix knob is your friend:</strong> Set it low (20-30%) for subtle enhancement, higher for more obvious coloration</li>
+                    <li><strong>Quick tip:</strong> If you're unsure, start by making a gentle curve and slowly make it more extreme until you hear the effect, then back off to taste</li>
+                </ul>
+            </div>
+            
+            <div class="doc-article" id="quantum-eq">
+                <h3>Quantum EQ Guide</h3>
+                <p>Precision equalization techniques for professional results:</p>
+                
+                <h4>Working with Bands</h4>
+                <p>Each of the 10 bands can be configured independently:</p>
+                <ul>
+                    <li>Click on the spectrum to create/modify bands</li>
+                    <li>Double-click band buttons to toggle on/off</li>
+                    <li>Use keyboard shortcuts 1-0 for quick access</li>
+                    <li>Right-click control points to reset</li>
+                </ul>
+                
+                <h4>Essential Keyboard Shortcuts</h4>
+                <ul>
+                    <li><strong>Alt + Drag Up/Down:</strong> Modify the Q (width) of the filter while dragging an EQ point</li>
+                    <li><strong>Ctrl + Click on a band:</strong> Solo that band to hear it in isolation</li>
+                    <li><strong>Ctrl + Alt + Drag:</strong> Solo the band AND adjust its width at the same time - perfect for fine-tuning</li>
+                </ul>
+                
+                <h4>Advanced Features</h4>
+                <ul>
+                    <li><strong>Proportional Q:</strong> Automatically adjusts bandwidth with gain (2x narrower for cuts, 0.5x wider for boosts)</li>
+                    <li><strong>Asymmetric Curves:</strong> Adjustable asymmetry (1.0-2.0x) for natural-sounding bell curves</li>
+                    <li><strong>Matched-Z Transform:</strong> Superior high-frequency response with minimal cramping</li>
+                    <li><strong>120 FPS FFT:</strong> Ultra-smooth spectrum analyzer with 4096-point resolution</li>
+                    <li><strong>Cascaded Filters:</strong> Up to 48dB/oct slopes using Butterworth biquad stages</li>
+                </ul>
+            </div>
+            
+            <div class="doc-article" id="troubleshooting">
+                <h3>Troubleshooting</h3>
+                <p>Solutions to common issues:</p>
+                
+                <h4>Plugin Not Showing in DAW</h4>
+                <ul>
+                    <li>Ensure you've installed the correct format for your DAW</li>
+                    <li>Rescan your plugin folders</li>
+                    <li>Check plugin blocklist/blacklist</li>
+                    <li>Verify installation path matches DAW scan path</li>
+                </ul>
+                
+                <h4>Performance Issues</h4>
+                <ul>
+                    <li>Increase buffer size for mixing</li>
+                    <li>Update graphics drivers</li>
+                    <li>Close other CPU-intensive applications</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    
+    <section class="faq" id="faq">
+        <div class="section-header">
+            <h2>Frequently Asked <span class="gradient-text">Questions</span></h2>
+        </div>
+        
+        <div class="faq-container">
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>What plugin formats are supported?</span>
+                    <i class="fas fa-chevron-down faq-icon"></i>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        We support VST3 format on Windows only. This means our plugins work with 
+                        VST3-compatible DAWs but not with Pro Tools (which requires AAX format).
+                    </div>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Can I use my license on multiple computers?</span>
+                    <i class="fas fa-chevron-down faq-icon"></i>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        Yes! Each license allows activation on up to 3 computers simultaneously. 
+                        You can manage your activations from your account dashboard.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Is there a trial version available?</span>
+                    <i class="fas fa-chevron-down faq-icon"></i>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        Yes, we offer a fully functional trial for all our plugins. 
+                        The trial includes all features but inserts 1 second of silence every 60 seconds.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>How do updates work?</span>
+                    <i class="fas fa-chevron-down faq-icon"></i>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        All updates are free for life! You'll receive email notifications for major updates, 
+                        and can always download the latest version from your account page.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="requirements" id="requirements">
+        <div class="section-header">
+            <h2>System <span class="gradient-text">Requirements</span></h2>
+        </div>
+        
+        <div class="req-grid">
+            <div class="req-card">
+                <div class="req-platform">
+                    <i class="fab fa-windows platform-icon" style="color: #0078d4;"></i>
+                    <span class="platform-name">Windows</span>
+                </div>
+                <ul class="req-list">
+                    <li>Windows 10 or higher (64-bit)</li>
+                    <li>Intel Core i5 or AMD equivalent</li>
+                    <li>8GB RAM minimum (16GB recommended)</li>
+                    <li>OpenGL 3.3 compatible graphics</li>
+                    <li>VST3 compatible DAW</li>
+                </ul>
+            </div>
+            
+            <div class="req-card">
+                <div class="req-platform">
+                    <i class="fab fa-apple platform-icon" style="color: #555; opacity: 0.3;"></i>
+                    <span class="platform-name" style="opacity: 0.5;">macOS</span>
+                </div>
+                <ul class="req-list">
+                    <li style="color: var(--text-tertiary);">Not currently supported</li>
+                </ul>
+            </div>
+            
+            <div class="req-card">
+                <div class="req-platform">
+                    <i class="fas fa-microchip platform-icon" style="color: #f093fb;"></i>
+                    <span class="platform-name">Supported DAWs (Windows)</span>
+                </div>
+                <ul class="req-list">
+                    <li>Ableton Live 10+ (Windows)</li>
+                    <li>Cubase 10+</li>
+                    <li>Studio One 5+</li>
+                    <li>FL Studio 20+</li>
+                    <li>Reaper 6+</li>
+                    <li>Bitwig Studio 4+</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    
+    <section class="contact-support" id="contact-support">
+        <div class="support-cta">
+            <h2>Still Need <span class="gradient-text">Help?</span></h2>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+                Our support team is here to assist you with any questions or issues.
+                We typically respond within 24 hours.
+            </p>
+            <div>
+                <a href="contact-page.html" class="btn btn-primary">
+                    <i class="fas fa-envelope"></i>
+                    Contact Support
+                </a>
+                <a href="#" class="btn btn-secondary">
+                    <i class="fas fa-comments"></i>
+                    Community Forum
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="footer-content">
+            <div class="social-links">
+                <a href="https://www.facebook.com/secretweapondsp" target="_blank" rel="noopener"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.instagram.com/secretweapondsp/" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.youtube.com/@secretweapondsp" target="_blank" rel="noopener"><i class="fab fa-youtube"></i></a>
+                <a href="https://www.tiktok.com/@secretweapondsp" target="_blank" rel="noopener"><i class="fab fa-tiktok"></i></a>
+            </div>
+            <p>&copy; 2025 Secret Weapon DSP. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+        
+        // Hamburger menu functionality
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.querySelector('.nav-links');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+        const body = document.body;
+        
+        function toggleMobileMenu() {
+            hamburger.classList.toggle('active');
+            navLinks.classList.toggle('mobile-active');
+            mobileOverlay.classList.toggle('active');
+            body.style.overflow = body.style.overflow === 'hidden' ? '' : 'hidden';
+        }
+        
+        hamburger.addEventListener('click', toggleMobileMenu);
+        
+        mobileOverlay.addEventListener('click', () => {
+            if (navLinks.classList.contains('mobile-active')) {
+                toggleMobileMenu();
+            }
+        });
+        
+        // Close menu when clicking on a link
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (navLinks.classList.contains('mobile-active')) {
+                    toggleMobileMenu();
+                }
+            });
+        });
+        
+        // Documentation tabs
+        const docTabs = document.querySelectorAll('.doc-tab');
+        const docArticles = document.querySelectorAll('.doc-article');
+        
+        docTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const targetDoc = tab.dataset.doc;
+                
+                // Update active states
+                docTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                docArticles.forEach(article => {
+                    article.classList.remove('active');
+                    if (article.id === targetDoc) {
+                        article.classList.add('active');
+                    }
+                });
+            });
+        });
+        
+        // FAQ accordion
+        const faqItems = document.querySelectorAll('.faq-item');
+        
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            
+            question.addEventListener('click', () => {
+                // Close other items
+                faqItems.forEach(otherItem => {
+                    if (otherItem !== item) {
+                        otherItem.classList.remove('active');
+                    }
+                });
+                
+                // Toggle current item
+                item.classList.toggle('active');
+            });
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

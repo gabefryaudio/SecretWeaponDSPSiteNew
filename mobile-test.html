@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Layout Test - Canvas Comp</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #1a1a2e;
+            color: white;
+        }
+        
+        .test-info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        
+        h2 {
+            color: #4ecdc4;
+            margin-top: 0;
+        }
+        
+        .layout-preview {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+        
+        .expected-order {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .layout-item {
+            background: rgba(78, 205, 196, 0.2);
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #4ecdc4;
+        }
+        
+        .issue-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .issue-list li {
+            margin: 10px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .issue-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4ecdc4;
+        }
+        
+        .test-link {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #4ecdc4;
+            color: #1a1a2e;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .test-link:hover {
+            background: #45b3aa;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-info">
+        <h1>Canvas Comp - Mobile Layout Test</h1>
+        <p>This page documents the mobile layout changes for the Canvas Comp plugin.</p>
+        <p><strong>Device width:</strong> <span id="device-width"></span>px</p>
+        <p><strong>Layout mode:</strong> <span id="layout-mode"></span></p>
+    </div>
+    
+    <div class="test-section">
+        <h2>Expected Mobile Layout (Vertical Stack)</h2>
+        <div class="layout-preview">
+            <div class="expected-order">
+                <div class="layout-item">
+                    <strong>1. Curve Editor (Top)</strong>
+                    <ul>
+                        <li>Canvas size: 280x280px</li>
+                        <li>Centered horizontally</li>
+                        <li>Compression/Waveshaper switcher</li>
+                        <li>Reset buttons below canvas</li>
+                    </ul>
+                </div>
+                <div class="layout-item">
+                    <strong>2. Controls Section (Middle)</strong>
+                    <ul>
+                        <li>Horizontal rows of controls</li>
+                        <li>Input Gain, Attack, Release</li>
+                        <li>Waveshaper Amount</li>
+                        <li>Makeup Gain, Mix</li>
+                    </ul>
+                </div>
+                <div class="layout-item">
+                    <strong>3. Preset Controls</strong>
+                    <ul>
+                        <li>Preset selector</li>
+                        <li>Save/Delete buttons</li>
+                    </ul>
+                </div>
+                <div class="layout-item">
+                    <strong>4. Meters Section (Bottom)</strong>
+                    <ul>
+                        <li>Input Level meters</li>
+                        <li>Gain Reduction meter</li>
+                        <li>Output Level meters</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Changes Implemented</h2>
+        <ul class="issue-list">
+            <li>Switched from horizontal to vertical layout for mobile screens (≤768px)</li>
+            <li>Increased canvas size from 200x200 to 280x280 for better touch interaction</li>
+            <li>Added touch event support for control points</li>
+            <li>Fixed coordinate transformation for scaled canvases</li>
+            <li>Reorganized controls into horizontal rows within sections</li>
+            <li>Made meters section responsive with full width on mobile</li>
+            <li>Added proper box-sizing and overflow handling</li>
+            <li>Removed non-essential elements (zoom control, curve info) on mobile</li>
+        </ul>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test the Plugin</h2>
+        <p>Click below to test the Canvas Comp with the new mobile layout:</p>
+        <a href="canvas-compressor-page.html" class="test-link">Open Canvas Comp</a>
+        
+        <h3>Testing Instructions:</h3>
+        <ol>
+            <li>Open the page on a mobile device or use browser dev tools to simulate mobile</li>
+            <li>Verify all sections are visible without horizontal scrolling</li>
+            <li>Test touch/click and drag on control points</li>
+            <li>Switch between Compression and Waveshaper views</li>
+            <li>Adjust all sliders to ensure they're responsive</li>
+            <li>Check that meters are updating correctly</li>
+        </ol>
+    </div>
+    
+    <script>
+        // Display device info
+        document.getElementById('device-width').textContent = window.innerWidth;
+        document.getElementById('layout-mode').textContent = window.innerWidth <= 768 ? 'Mobile (Vertical)' : 'Desktop (Horizontal)';
+        
+        // Update on resize
+        window.addEventListener('resize', () => {
+            document.getElementById('device-width').textContent = window.innerWidth;
+            document.getElementById('layout-mode').textContent = window.innerWidth <= 768 ? 'Mobile (Vertical)' : 'Desktop (Horizontal)';
+        });
+    </script>
+</body>
+</html>

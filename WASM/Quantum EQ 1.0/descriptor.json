@@ -1,0 +1,15 @@
+{
+    "identifier": "com.secretweapondsp.quantumeq.10bands.solo",
+    "name": "Quantum EQ",
+    "vendor": "Secret Weapon DSP",
+    "description": "10-band EQ with frequency isolation solo mode",
+    "version": "1.0.0",
+    "apiVersion": "2.0.0", 
+    "keywords": [ "Cmajor" ],
+    "isInstrument": false,
+    "hasMidiInput": false,
+    "hasMidiOutput": false,
+    "hasAudioInput": true,
+    "hasAudioOutput": true,
+    "website": ""
+}

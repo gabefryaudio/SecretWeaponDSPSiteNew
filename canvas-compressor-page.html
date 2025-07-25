@@ -1,0 +1,2279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas Comp - Secret Weapon DSP</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Mobile Plugin Support -->
+    <script src="mobile-plugin-support.js"></script>
+    
+    <style>
+        :root {
+            /* Canvas Comp Theme Colors */
+            --primary-gradient: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%);
+            --primary-color: #00b4d8;
+            --primary-dark: #0077b6;
+            --accent-color: #90e0ef;
+            --dark-bg: #0a0a0a;
+            --darker-bg: #000;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --text-primary: rgba(255, 255, 255, 0.95);
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-tertiary: rgba(255, 255, 255, 0.5);
+            --border-color: rgba(255, 255, 255, 0.08);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            overflow-x: hidden;
+            max-width: 100%;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            max-width: 100vw;
+        }
+        
+        /* Background Animation */
+        .canvas-bg {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: -2;
+        }
+        
+        .canvas-animation {
+            position: fixed;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 180, 216, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 119, 182, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(144, 224, 239, 0.08) 0%, transparent 50%);
+            z-index: -1;
+            opacity: 0.5;
+            animation: canvasPulse 20s ease-in-out infinite;
+        }
+        
+        @keyframes canvasPulse {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(1.05); }
+        }
+        
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
+            backdrop-filter: blur(40px) saturate(150%);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        nav.scrolled {
+            background: rgba(0, 0, 0, 0.95);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0.75rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            height: 90px;
+        }
+        
+        .logo img {
+            height: 100%;
+            width: auto;
+            clip-path: inset(0 0 15% 0);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-gradient);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 10rem 2rem 4rem;
+            text-align: center;
+            position: relative;
+        }
+        
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.5rem;
+            background: rgba(0, 180, 216, 0.1);
+            border: 1px solid rgba(0, 180, 216, 0.3);
+            border-radius: 50px;
+            font-size: 0.875rem;
+            color: var(--accent-color);
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 5rem;
+            font-weight: 300;
+            margin-bottom: 1.5rem;
+            letter-spacing: 4px;
+            background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+            position: relative;
+        }
+        
+        h1::after {
+            content: 'CUSTOM CURVE DESIGNER';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            letter-spacing: 3px;
+            font-weight: 500;
+            opacity: 0.4;
+            white-space: nowrap;
+        }
+        
+        .hero-description {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 3rem auto;
+            line-height: 1.8;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+        
+        .hero-actions {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+        }
+        
+        .btn {
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%);
+            color: white;
+            border: 0;
+            box-shadow: 0 8px 24px rgba(0, 180, 216, 0.4);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(0, 180, 216, 0.6);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border: 2px solid rgba(0, 180, 216, 0.3);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(0, 180, 216, 0.1);
+            border-color: var(--primary-color);
+        }
+        
+        /* Audio Player Section */
+        .audio-demos {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .section-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50px;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+        
+        h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .gradient-text {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .audio-player-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .audio-player {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Compact Carousel Styles */
+        .track-carousel {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            gap: 1rem;
+        }
+        
+        .carousel-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+        
+        .carousel-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.1);
+        }
+        
+        .current-track {
+            flex: 1;
+            text-align: center;
+            min-width: 0;
+        }
+        
+        .track-info-compact h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .track-info-compact p {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .compact-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .control-btn {
+            width: 44px;
+            height: 44px;
+            border: none;
+            background: var(--primary-gradient);
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 15px rgba(0, 180, 216, 0.3);
+        }
+        
+        .control-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 180, 216, 0.5);
+        }
+        
+        .ab-toggle {
+            display: flex;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            padding: 0.2rem;
+        }
+        
+        .ab-btn {
+            padding: 0.4rem 0.8rem;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .ab-btn.active {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: 0 2px 10px rgba(0, 180, 216, 0.3);
+        }
+        
+        .volume-mini {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .volume-mini i {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        #volumeSlider {
+            width: 60px;
+            height: 3px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+        }
+        
+        #volumeSlider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            background: var(--primary-gradient);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 180, 216, 0.4);
+        }
+        
+        .track-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .indicator {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .indicator:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+        
+        .indicator.active {
+            background: var(--primary-gradient);
+            width: 20px;
+            border-radius: 3px;
+        }
+        
+        /* Visual Connector */
+        .visual-connector {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 0;
+            position: relative;
+        }
+        
+        .connector-line {
+            width: 2px;
+            height: 60px;
+            background: var(--primary-gradient);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .connector-line::after {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent 0%, rgba(255,255,255,0.8) 50%, transparent 100%);
+            animation: flowDown 2s linear infinite;
+        }
+        
+        @keyframes flowDown {
+            to { top: 100%; }
+        }
+        
+        .connector-arrow {
+            font-size: 2rem;
+            color: var(--text-primary);
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: pulseArrow 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulseArrow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(5px); }
+        }
+        
+        /* Plugin Visual */
+        .plugin-visual {
+            padding: 4rem 2rem;
+            max-width: 1600px;
+            margin: 0 auto;
+            animation: fadeInUp 0.8s ease-out 0.8s both;
+        }
+        
+        .interface-showcase {
+            background: linear-gradient(135deg, #0a0a0f 0%, #14141f 100%);
+            border: 1px solid rgba(0, 180, 216, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            position: relative;
+            overflow: visible;
+            box-shadow: 
+                0 0 0 1px rgba(255,255,255,0.06),
+                inset 0 2px 8px rgba(0,0,0,0.5),
+                0 30px 60px rgba(0,0,0,0.5);
+        }
+        
+        .interface-glow {
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, 
+                transparent 30%, 
+                rgba(0, 180, 216, 0.3) 50%, 
+                transparent 70%);
+            background-size: 200% 200%;
+            animation: glowMove 8s linear infinite;
+            border-radius: 20px;
+            opacity: 0.5;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        @keyframes glowMove {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 200% 200%; }
+        }
+        
+        .interface-preview {
+            min-height: 700px;
+            display: flex;
+            align-items: stretch;
+            justify-content: center;
+            position: relative;
+            background: #0a0a0f;
+            border-radius: 12px;
+            overflow: visible;
+        }
+        
+        #pluginContainer {
+            width: 100%;
+            min-height: 700px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #canvasCompContainer {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #canvasCompContainer > * {
+            margin: 0 auto;
+        }
+        
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            z-index: 10;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: pluginSpin 1s linear infinite;
+        }
+        
+        @keyframes pluginSpin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            margin-top: 20px;
+            color: var(--text-secondary);
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 6rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+        
+        .feature-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary-gradient);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(0, 180, 216, 0.3);
+        }
+        
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .feature-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--accent-color);
+        }
+        
+        .feature-card p {
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+        
+        /* Purchase Section */
+        .purchase {
+            padding: 6rem 2rem;
+            text-align: center;
+            position: relative;
+        }
+        
+        .purchase-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 4rem;
+            background: linear-gradient(135deg, rgba(0, 180, 216, 0.1) 0%, rgba(0, 119, 182, 0.1) 100%);
+            border: 1px solid rgba(0, 180, 216, 0.3);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .purchase-content::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: var(--primary-gradient);
+            border-radius: 24px;
+            opacity: 0.5;
+            filter: blur(20px);
+            z-index: -1;
+        }
+        
+        .price {
+            font-size: 4rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 2rem 0;
+        }
+        
+        .price-note {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+        
+        /* Footer */
+        footer {
+            padding: 4rem 2rem 2rem;
+            border-top: 1px solid var(--border-color);
+            background: rgba(10, 10, 10, 0.5);
+        }
+        
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        
+        .social-links a {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+        
+        .social-links a:hover {
+            background: rgba(0, 180, 216, 0.2);
+            border-color: var(--primary-color);
+            color: var(--text-primary);
+            transform: translateY(-3px);
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Hide mobile hint on desktop */
+        .mobile-zoom-hint {
+            display: none;
+        }
+        
+        /* Hamburger Menu */
+        .hamburger {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            position: relative;
+            width: 30px;
+            height: 30px;
+            z-index: 1001;
+        }
+        
+        .hamburger span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background: var(--text-primary);
+            margin: 5px 0;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+        
+        /* Mobile */
+        @media (max-width: 768px) {
+            /* Fix nav container padding on mobile */
+            .nav-container {
+                padding: 0.75rem 1rem;
+                max-width: 100%;
+            }
+            
+            /* Ensure logo doesn't push hamburger off screen */
+            .logo {
+                height: 60px;
+                max-width: 200px;
+            }
+            
+            .logo img {
+                height: 100%;
+                width: auto;
+                max-width: 100%;
+            }
+            
+            .hamburger {
+                display: block;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            h1 {
+                font-size: 3rem;
+                letter-spacing: 2px;
+            }
+            
+            h1::after {
+                font-size: 8px;
+                letter-spacing: 2px;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .price {
+                font-size: 3rem;
+            }
+            
+            /* Reduce spacing on mobile */
+            .plugin-visual h2 {
+                font-size: 1.5rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .plugin-visual .gradient-text {
+                font-size: 1.5rem;
+            }
+            
+            /* Plugin container mobile adjustments */
+            .plugin-visual {
+                padding: 0;
+                margin-top: -20px;
+                overflow-x: hidden;
+                max-width: 100vw;
+            }
+            
+            .interface-showcase {
+                padding: 0;
+                margin: 0;
+                background: transparent;
+                border: none;
+                border-radius: 0;
+            }
+            
+            .interface-preview {
+                min-height: auto;
+                height: auto;
+                max-height: none;
+                background: transparent;
+                margin: 0;
+                padding: 20px 0;
+                display: block;
+            }
+            
+            #pluginContainer {
+                min-height: auto;
+                height: auto;
+                width: 100%;
+                max-height: none;
+                overflow: visible;
+                background: transparent;
+                display: block;
+                position: relative;
+            }
+            
+            #canvasCompContainer {
+                width: 100% !important;
+                height: auto !important;
+                margin: 0 auto !important;
+                background: linear-gradient(135deg, #1a1a2e 0%, #0a0a0a 100%);
+                overflow-x: hidden !important;
+                overflow-y: visible !important;
+                position: relative;
+                display: block;
+            }
+            
+            /* Plugin will be scaled via JavaScript */
+            #canvasCompContainer > div {
+                transform-origin: top left !important;
+                position: relative !important;
+            }
+            
+            /* Ensure touch events work but allow scrolling on controls panel */
+            #canvasCompContainer * {
+                touch-action: none;
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+                user-select: none;
+            }
+            
+            /* Specifically allow scrolling on the controls panel */
+            #canvasCompContainer .controls {
+                touch-action: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+                overflow-y: auto !important;
+                overflow-x: hidden !important;
+                overscroll-behavior: contain;
+            }
+            
+            /* But keep form controls non-scrollable */
+            #canvasCompContainer .controls input,
+            #canvasCompContainer .controls button,
+            #canvasCompContainer .controls select {
+                touch-action: none !important;
+            }
+            
+            /* Hide extra text on mobile */
+            .plugin-visual .section-header {
+                display: none;
+            }
+            
+            .interface-glow {
+                display: none;
+            }
+            
+            /* Mobile zoom suggestion */
+            .mobile-zoom-hint {
+                display: block;
+                background: rgba(0, 180, 216, 0.1);
+                border: 1px solid rgba(0, 180, 216, 0.3);
+                border-radius: 8px;
+                padding: 12px 16px;
+                margin: 0 16px 16px;
+                text-align: center;
+                font-size: 14px;
+                color: var(--text-primary);
+                animation: fadeInUp 0.6s ease-out;
+            }
+            
+            .mobile-zoom-hint i {
+                color: #00b4d8;
+                margin-right: 8px;
+            }
+            
+            .mobile-zoom-hint .gesture-icon {
+                display: inline-block;
+                font-size: 20px;
+                margin: 0 4px;
+                vertical-align: middle;
+            }
+            
+            /* Keep audio player section visible on mobile */
+            
+            /* Audio player mobile styles */
+            .audio-player-container {
+                max-width: 100%;
+                padding: 0 1rem;
+            }
+            
+            .audio-player {
+                padding: 1.5rem;
+            }
+            
+            .compact-controls {
+                gap: 1rem;
+                flex-wrap: wrap;
+                justify-content: space-between;
+            }
+            
+            .ab-toggle {
+                flex: 0 0 auto;
+            }
+            
+            .volume-mini {
+                flex: 0 0 auto;
+            }
+            
+            #volumeSlider {
+                width: 50px;
+            }
+            
+            /* Adjust arrow positioning */
+            .connector-arrow {
+                margin: 10px 0;
+            }
+        }
+        
+        /* Tablet adjustments */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .interface-preview {
+                min-height: 500px;
+            }
+            
+            #pluginContainer {
+                min-height: 500px;
+            }
+            
+            #canvasCompContainer {
+                transform: scale(0.8);
+                transform-origin: top center;
+            }
+        }
+        
+        /* Mobile Navigation */
+        .nav-links.mobile-active {
+            display: flex;
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 100vh;
+            background: rgba(10, 10, 15, 0.98);
+            backdrop-filter: blur(20px);
+            flex-direction: column;
+            padding: 6rem 1.5rem 2rem;
+            gap: 1.5rem;
+            align-items: flex-start;
+            box-shadow: -10px 0 40px rgba(0, 0, 0, 0.5);
+            animation: slideIn 0.3s ease;
+            z-index: 999;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+        
+        .nav-links.mobile-active a {
+            font-size: 1.125rem;
+            width: 100%;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        /* Mobile Overlay */
+        .mobile-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 998;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .mobile-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="canvas-bg"></div>
+    <div class="canvas-animation"></div>
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+    
+    <nav id="navbar">
+        <div class="nav-container">
+            <a href="secretweapon-homepage.html" class="logo">
+                <img src="images/secret-weapon-dsp-logo.svg" alt="Secret Weapon DSP">
+            </a>
+            <div class="nav-links">
+                <a href="secretweapon-homepage.html">Home</a>
+                <a href="plugins-overview.html">Plugins</a>
+                <a href="support-page.html">Support</a>
+                <a href="contact-page.html">Contact</a>
+            </div>
+            <button class="hamburger" id="hamburger" aria-label="Toggle navigation menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+    
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <i class="fas fa-bezier-curve"></i>
+                Precision Dynamics Control
+            </div>
+            <h1>CANVAS COMP</h1>
+            <p class="hero-description">
+                Draw your own compression curves to shape dynamics exactly to your taste. 
+                Design custom waveshapers to find the perfect harmonic sweet spot for any source. 
+                Learn by doing - see instantly how each curve point affects your sound.
+            </p>
+            <p style="font-size: 0.875rem; color: rgba(255,255,255,0.6); margin-top: 1rem;">
+                <i class="fas fa-check-circle" style="color: #00b4d8;"></i> No iLok Required
+            </p>
+            <div class="hero-actions">
+                <a href="#purchase" class="btn btn-primary">
+                    <i class="fas fa-shopping-cart"></i>
+                    Buy Now
+                </a>
+                <a href="#demo" class="btn btn-secondary" onclick="document.getElementById('demo').scrollIntoView({ behavior: 'smooth' }); return false;">
+                    <i class="fas fa-play"></i>
+                    Try Live Demo
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Audio Player Section -->
+    <section class="audio-demos" id="demo">
+        <div class="section-header">
+            <div class="section-badge">
+                <i class="fas fa-music"></i>
+                Step 1: Select Audio Source
+            </div>
+            <h2>Choose a <span class="gradient-text">Track</span></h2>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem;">Pick a drum or bass track to process through Canvas Comp</p>
+        </div>
+        
+        <div style="background: rgba(0, 180, 216, 0.1); border: 1px solid rgba(0, 180, 216, 0.3); border-radius: 8px; padding: 1rem 1.5rem; margin: 2rem auto; max-width: 800px; text-align: center;">
+            <p style="color: var(--text-primary); font-size: 0.875rem; margin: 0;">
+                <i class="fas fa-info-circle" style="margin-right: 0.5rem; color: #00b4d8;"></i>
+                <strong>Note:</strong> This web demo provides a preview of Canvas Comp's capabilities. The standalone plugin delivers significantly better performance, lower latency, and higher audio quality than what's possible with web audio technology.
+            </p>
+        </div>
+        
+        <div class="audio-player-container">
+            <div class="audio-player">
+                <!-- Compact Single Track Display -->
+                <div class="track-carousel">
+                    <button class="carousel-btn prev" id="prevBtn">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    
+                    <div class="current-track">
+                        <div class="track-info-compact">
+                            <h4 id="track-title-compact">Kick In</h4>
+                            <p id="track-subtitle">Deep punch with controlled dynamics</p>
+                        </div>
+                    </div>
+                    
+                    <button class="carousel-btn next" id="nextBtn">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                
+                <!-- Compact Controls -->
+                <div class="compact-controls">
+                    <button class="control-btn play-btn" id="playBtn">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    
+                    <div class="ab-toggle">
+                        <button class="ab-btn active" data-mode="processed">Comp On</button>
+                        <button class="ab-btn" data-mode="original">Comp Off</button>
+                    </div>
+                    
+                    <div class="volume-mini">
+                        <i class="fas fa-volume-up"></i>
+                        <input type="range" id="volumeSlider" min="0" max="100" value="70">
+                    </div>
+                </div>
+                
+                <!-- Track indicator dots -->
+                <div class="track-indicators">
+                    <span class="indicator active" data-track="0"></span>
+                    <span class="indicator" data-track="1"></span>
+                    <span class="indicator" data-track="2"></span>
+                    <span class="indicator" data-track="3"></span>
+                    <span class="indicator" data-track="4"></span>
+                    <span class="indicator" data-track="5"></span>
+                    <span class="indicator" data-track="6"></span>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Visual Connector -->
+    <div class="visual-connector">
+        <div class="connector-line"></div>
+        <div class="connector-arrow">
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </div>
+    
+    <section class="plugin-visual">
+        <div class="section-header" style="text-align: center; margin-bottom: 2rem;">
+            <div class="section-badge" style="display: inline-flex;">
+                <i class="fas fa-sliders-h"></i>
+                Step 2: Shape Your Dynamics
+            </div>
+            <h2 style="font-size: 2.5rem; margin-top: 1rem;">Draw Your <span class="gradient-text">Compression Curves</span></h2>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem;">Use the curve editors below to sculpt your perfect dynamics in real-time</p>
+        </div>
+        <div class="mobile-zoom-hint" id="mobileZoomHint">
+            <i class="fas fa-info-circle"></i>
+            <strong>Tip:</strong> Pinch to zoom out <span class="gesture-icon">🤏</span> for the best view of the full plugin interface
+            <button onclick="document.getElementById('mobileZoomHint').style.display='none'; localStorage.setItem('hideCanvasCompZoomHint', 'true');" style="
+                background: none;
+                border: none;
+                color: var(--text-secondary);
+                cursor: pointer;
+                float: right;
+                margin-left: 16px;
+                font-size: 18px;
+                line-height: 1;
+                opacity: 0.7;
+                transition: opacity 0.2s;
+            " onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">×</button>
+        </div>
+        <div class="interface-showcase">
+            <div class="interface-glow"></div>
+            <div class="interface-preview" id="pluginContainer">
+                <div class="loading-overlay" id="loadingOverlay">
+                    <div class="loading-spinner"></div>
+                    <div class="loading-text">Loading Canvas Comp...</div>
+                </div>
+                <div id="canvasCompContainer" style="width: 100%; height: 100%; position: relative;"></div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="features">
+        <div class="section-header">
+            <div class="section-badge">
+                <i class="fas fa-cube"></i>
+                Dual Curve Designer
+            </div>
+            <h2>Your Vision, Your <span class="gradient-text">Sound</span></h2>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <h3>Shape Dynamics Your Way</h3>
+                <p>
+                    Draw curves that make drums punch harder, vocals sit perfectly, or 
+                    bass stay controlled yet powerful. Create upward compression for 
+                    ambient textures, multi-stage curves for complex material, or asymmetric 
+                    shapes that breathe life into static sounds.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>Learn By Designing</h3>
+                <p>
+                    Finally understand compression by seeing exactly how curves shape sound. 
+                    Move points and instantly hear the difference. Build intuition about dynamics 
+                    that transforms how you approach every mix.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>Find Your Harmonic Sweet Spot</h3>
+                <p>
+                    Draw waveshaper curves that add exactly the harmonics your tracks need. 
+                    Warm up digital coldness, add tube-like even harmonics, or create 
+                    aggressive odd harmonics for edge.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>Create Impossible Dynamics</h3>
+                <p>
+                    Design curves that no hardware could ever achieve. Make quiet parts 
+                    louder while keeping loud parts quiet. Draw S-curves that compress 
+                    mids while expanding extremes.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>Perfect It In Context</h3>
+                <p>
+                    Draw your curves while listening to the full mix. Shape compression 
+                    that reacts musically to your specific track. No more guessing with 
+                    ratios and thresholds - just draw what sounds right.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>Zero Latency Processing</h3>
+                <p>
+                    True zero-latency processing makes Canvas Comp perfect for tracking 
+                    and live performance. No phase issues, no timing problems – just pure, 
+                    instantaneous dynamics control.
+                </p>
+            </div>
+            
+        </div>
+    </section>
+    
+    <section class="purchase" id="purchase">
+        <div class="purchase-content">
+            <div class="section-badge" style="display: inline-flex;">
+                <i class="fas fa-star"></i>
+                Get Canvas Comp
+            </div>
+            <h2>Create Your Signature <span class="gradient-text">Sound</span></h2>
+            <div style="text-align: center; margin: 2rem 0;">
+                <div style="font-size: 4rem; font-weight: 700; color: #888; text-decoration: line-through; margin-bottom: -2.5rem;">$50</div>
+                <div class="price">$35</div>
+            </div>
+            <p style="color: #00b4d8; font-weight: 600; text-align: center; margin-bottom: 2rem;">Limited Time Sale!</p>
+            <div class="hero-actions" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 280px)); gap: 2rem; justify-content: center; margin-top: 2rem; align-items: end;">
+                <div id='canvas-compressor-buy-button'></div>
+                <div id='canvas-compressor-demo-button'></div>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="footer-content">
+            <div class="social-links">
+                <a href="https://www.facebook.com/secretweapondsp" target="_blank" rel="noopener"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.instagram.com/secretweapondsp/" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.youtube.com/@secretweapondsp" target="_blank" rel="noopener"><i class="fab fa-youtube"></i></a>
+                <a href="https://www.tiktok.com/@secretweapondsp" target="_blank" rel="noopener"><i class="fab fa-tiktok"></i></a>
+            </div>
+            <p>&copy; 2025 Secret Weapon DSP. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script>
+        console.log('Canvas Comp page loading...');
+        
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+        
+        // Hamburger menu functionality
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.querySelector('.nav-links');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+        const body = document.body;
+        
+        function toggleMobileMenu() {
+            hamburger.classList.toggle('active');
+            navLinks.classList.toggle('mobile-active');
+            mobileOverlay.classList.toggle('active');
+            body.style.overflow = body.style.overflow === 'hidden' ? '' : 'hidden';
+        }
+        
+        hamburger.addEventListener('click', toggleMobileMenu);
+        
+        mobileOverlay.addEventListener('click', () => {
+            if (navLinks.classList.contains('mobile-active')) {
+                toggleMobileMenu();
+            }
+        });
+        
+        // Close menu when clicking on a link
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (navLinks.classList.contains('mobile-active')) {
+                    toggleMobileMenu();
+                }
+            });
+        });
+        
+        // WASM Plugin Loading
+        let pluginLoaded = false;
+        let loadingStarted = false;
+        let audioContext = null;
+        let patchConnection = null;
+        
+        async function loadCanvasCompressor() {
+            if (pluginLoaded || loadingStarted) return;
+            loadingStarted = true;
+            
+            console.log('Loading Canvas Comp plugin...');
+            const container = document.getElementById('canvasCompContainer');
+            const overlay = document.getElementById('loadingOverlay');
+            const loadingText = overlay.querySelector('.loading-text');
+            
+            try {
+                // Create or get shared audio context
+                if (!window.globalAudioContext) {
+                    window.globalAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    console.log('Plugin created global audio context');
+                }
+                audioContext = window.globalAudioContext;
+                
+                // Import the Canvas Comp module
+                const module = await import('./WASM/Canvs Comp 1/cmaj_Canvas_Compressor.js');
+                const createPatchView = (await import('./WASM/Canvs Comp 1/cmaj_api/cmaj-patch-view.js')).createPatchView;
+                
+                // Create the patch connection
+                patchConnection = await module.createAudioWorkletNodePatchConnection(audioContext, 'canvas-compressor-processor');
+                
+                // Wait a bit for the worklet to fully initialize
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+                // Log the patchConnection to debug
+                console.log('Patch connection created:', patchConnection);
+                console.log('Available properties:', Object.keys(patchConnection));
+                
+                // The audio node should be accessible directly as audioNode
+                let audioNode = patchConnection.audioNode;
+                
+                if (!audioNode) {
+                    console.error('No audio node found in patch connection');
+                    console.log('Patch connection structure:', patchConnection);
+                    
+                    // Try to find it in other ways
+                    if (patchConnection.getAudioNode && typeof patchConnection.getAudioNode === 'function') {
+                        audioNode = patchConnection.getAudioNode();
+                    }
+                } else {
+                    console.log('Audio node found:', audioNode);
+                }
+                
+                // Create custom view
+                const customView = await createPatchView(patchConnection, 'custom');
+                
+                if (customView) {
+                    container.innerHTML = '';
+                    
+                    // Don't constrain the custom view size - let it be its natural size
+                    customView.style.margin = '0 auto';
+                    customView.style.position = 'relative';
+                    
+                    container.appendChild(customView);
+                    
+                    // Apply mobile scaling - simple proportional scale
+                    function applyMobileScaling() {
+                        const pluginWidth = 900;  // Fixed plugin width
+                        const pluginHeight = 550; // Fixed plugin height
+                        const viewportWidth = window.innerWidth;
+                        
+                        if (viewportWidth <= 768) {
+                            // For mobile, scale to fit viewport width with padding
+                            const padding = 20;
+                            const availableWidth = viewportWidth - padding;
+                            
+                            // Calculate scale based on width (like grabbing corner and dragging)
+                            const scale = availableWidth / pluginWidth;
+                            
+                            // Apply the scale transform to the plugin itself
+                            customView.style.transform = `scale(${scale})`;
+                            customView.style.transformOrigin = 'top left';
+                            
+                            // Set container dimensions to match scaled content
+                            const scaledHeight = pluginHeight * scale;
+                            const scaledWidth = pluginWidth * scale;
+                            
+                            // Set the canvasCompContainer dimensions
+                            const canvasContainer = document.getElementById('canvasCompContainer');
+                            canvasContainer.style.height = `${scaledHeight}px`;
+                            canvasContainer.style.width = `${scaledWidth}px`;
+                            
+                            // Update touch event coordinates
+                            if (window.updateTouchScale) {
+                                window.updateTouchScale(scale);
+                            }
+                            
+                            console.log('Mobile scaling:', {
+                                originalSize: `${pluginWidth}x${pluginHeight}`,
+                                scale: scale.toFixed(3),
+                                scaledSize: `${Math.round(scaledWidth)}x${Math.round(scaledHeight)}`
+                            });
+                        } else {
+                            // Reset for desktop
+                            customView.style.transform = 'scale(1)';
+                            customView.style.transformOrigin = 'top left';
+                            container.style.height = '';
+                            container.style.width = '';
+                            container.style.margin = '';
+                        }
+                    }
+                    
+                    // Apply initial scaling after a short delay to ensure dimensions are correct
+                    setTimeout(() => {
+                        applyMobileScaling();
+                    }, 100);
+                    
+                    // Reapply on resize
+                    window.addEventListener('resize', () => {
+                        setTimeout(applyMobileScaling, 50);
+                    });
+                    
+                    // Store the patchConnection globally for audio routing
+                    window.patchConnection = patchConnection;
+                    window.canvasCompNode = audioNode;
+                    
+                    // If audio is already playing, reconnect it through the compressor
+                    if (window.audioPlayer && window.audioPlayer.isPlaying && window.audioPlayer.needsPluginConnection) {
+                        console.log('Reconnecting audio through compressor...');
+                        window.audioPlayer.reconnectThroughPlugin();
+                    }
+                    
+                    setTimeout(() => {
+                        overlay.style.display = 'none';
+                        pluginLoaded = true;
+                    }, 300);
+                } else {
+                    throw new Error('Failed to create custom view');
+                }
+            } catch (error) {
+                console.error('Error loading Canvas Comp:', error);
+                loadingText.innerHTML = '<span style="color: #ff4365;">Error loading plugin. Refresh to retry.</span>';
+                loadingStarted = false;
+            }
+        }
+        
+        // Auto-load when page loads
+        window.addEventListener('load', () => {
+            // Always load the plugin immediately for audio routing
+            setTimeout(loadCanvasCompressor, 100);
+        });
+        
+        // Audio Player Functionality
+        class AudioPlayer {
+            constructor() {
+                this.audioContext = null;
+                this.sourceNode = null;
+                this.gainNode = null;
+                this.currentTrackIndex = -1;
+                this.isPlaying = false;
+                this.mode = 'processed'; // 'processed' or 'original'
+                this.audioBuffer = null;
+                this.startTime = 0;
+                this.pauseTime = 0;
+                this.pluginNode = null;
+                
+                // Define tracks using the same audio files
+                this.tracks = [
+                    {
+                        title: 'Kick In',
+                        artist: 'Deep punch with controlled dynamics',
+                        processed: './Audio_Files/Kick_In.wav',
+                        original: './Audio_Files/Kick_In.wav'
+                    },
+                    {
+                        title: 'Kick (Sub)',
+                        artist: 'Sub-frequency dynamics control',
+                        processed: './Audio_Files/Kick_(Sub).wav',
+                        original: './Audio_Files/Kick_(Sub).wav'
+                    },
+                    {
+                        title: 'Snare',
+                        artist: 'Transient shaping and sustain control',
+                        processed: './Audio_Files/Snare.wav',
+                        original: './Audio_Files/Snare.wav'
+                    },
+                    {
+                        title: 'Tom',
+                        artist: 'Natural compression for punch',
+                        processed: './Audio_Files/Tom.wav',
+                        original: './Audio_Files/Tom.wav'
+                    },
+                    {
+                        title: 'Overheads',
+                        artist: 'Glue compression for cohesion',
+                        processed: './Audio_Files/Overheads.wav',
+                        original: './Audio_Files/Overheads.wav'
+                    },
+                    {
+                        title: 'Room',
+                        artist: 'Ambient dynamics control',
+                        processed: './Audio_Files/Room.wav',
+                        original: './Audio_Files/Room.wav'
+                    },
+                    {
+                        title: 'Bass Line',
+                        artist: 'Consistent low-end energy',
+                        processed: './Audio_Files/Bass_Line.wav',
+                        original: './Audio_Files/Bass_Line.wav'
+                    }
+                ];
+                
+                this.initializeElements();
+                this.bindEvents();
+                
+                // Make player globally accessible
+                window.audioPlayer = this;
+            }
+            
+            async initAudioContext() {
+                if (!this.audioContext) {
+                    // Use the global audio context if it exists (from plugin)
+                    if (window.globalAudioContext) {
+                        this.audioContext = window.globalAudioContext;
+                        console.log('Using existing audio context from plugin');
+                    } else {
+                        this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        window.globalAudioContext = this.audioContext;
+                        console.log('Created new audio context');
+                    }
+                    this.gainNode = this.audioContext.createGain();
+                }
+            }
+            
+            initializeElements() {
+                this.playBtn = document.getElementById('playBtn');
+                this.prevBtn = document.getElementById('prevBtn');
+                this.nextBtn = document.getElementById('nextBtn');
+                this.volumeSlider = document.getElementById('volumeSlider');
+                this.trackTitle = document.getElementById('track-title-compact');
+                this.trackSubtitle = document.getElementById('track-subtitle');
+                this.trackIndicators = document.querySelectorAll('.indicator');
+                this.abButtons = document.querySelectorAll('.ab-btn');
+                
+                // Add click handlers for indicators
+                this.trackIndicators.forEach((indicator, index) => {
+                    indicator.addEventListener('click', () => this.loadTrack(index));
+                });
+            }
+            
+            bindEvents() {
+                // Player controls
+                this.playBtn.addEventListener('click', () => this.togglePlay());
+                this.prevBtn.addEventListener('click', () => this.playPrevious());
+                this.nextBtn.addEventListener('click', () => this.playNext());
+                
+                // Volume control
+                this.volumeSlider.addEventListener('input', (e) => {
+                    if (this.gainNode) {
+                        this.gainNode.gain.cancelScheduledValues(this.audioContext.currentTime);
+                        this.gainNode.gain.value = e.target.value / 100;
+                    }
+                });
+                
+                // A/B toggle
+                this.abButtons.forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        this.abButtons.forEach(b => b.classList.remove('active'));
+                        e.target.classList.add('active');
+                        this.mode = e.target.dataset.mode;
+                        console.log('Mode switched to:', this.mode);
+                    });
+                });
+            }
+            
+            async loadTrack(index, autoPlay = true) {
+                await this.initAudioContext();
+                
+                this.currentTrackIndex = index;
+                const track = this.tracks[index];
+                
+                // Update UI
+                this.trackTitle.textContent = track.title;
+                this.trackSubtitle.textContent = track.artist;
+                
+                // Update indicators
+                this.trackIndicators.forEach((indicator, i) => {
+                    indicator.classList.toggle('active', i === index);
+                });
+                
+                // Stop current playback
+                if (this.sourceNode) {
+                    this.stop();
+                }
+                
+                // Load audio
+                try {
+                    const response = await fetch(track[this.mode]);
+                    const arrayBuffer = await response.arrayBuffer();
+                    this.audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
+                    
+                    if (autoPlay) {
+                        this.play();
+                    }
+                } catch (error) {
+                    console.error('Error loading track:', error);
+                }
+            }
+            
+            play() {
+                if (!this.audioBuffer || !this.audioContext) return;
+                
+                // Create new source node
+                this.sourceNode = this.audioContext.createBufferSource();
+                this.sourceNode.buffer = this.audioBuffer;
+                this.sourceNode.loop = true;
+                
+                // Check for Canvas Comp node
+                if (window.canvasCompNode) {
+                    try {
+                        // Route through compressor: source → comp → gain → destination
+                        this.sourceNode.connect(window.canvasCompNode);
+                        
+                        // Disconnect gain from destination first
+                        try { this.gainNode.disconnect(); } catch (e) {}
+                        
+                        // Connect compressor to gain, then gain to destination
+                        window.canvasCompNode.connect(this.gainNode);
+                        this.gainNode.connect(this.audioContext.destination);
+                        
+                        console.log('Audio routed through Canvas Comp');
+                    } catch (error) {
+                        console.error('Error connecting to compressor:', error);
+                        // Fallback to direct connection
+                        this.sourceNode.connect(this.gainNode);
+                        this.gainNode.connect(this.audioContext.destination);
+                    }
+                } else {
+                    // Direct route: source → gain → destination
+                    this.sourceNode.connect(this.gainNode);
+                    this.gainNode.connect(this.audioContext.destination);
+                    console.log('Audio routed direct (no compressor) - plugin not loaded yet');
+                    
+                    // Set a flag to reconnect when plugin loads
+                    this.needsPluginConnection = true;
+                }
+                
+                // Start playback
+                const offset = this.pauseTime % this.audioBuffer.duration;
+                this.sourceNode.start(0, offset);
+                this.startTime = this.audioContext.currentTime - offset;
+                
+                this.isPlaying = true;
+                this.playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            }
+            
+            stop() {
+                if (!this.isPlaying) return;
+                
+                // Store pause position
+                this.pauseTime = (this.audioContext.currentTime - this.startTime) % this.audioBuffer.duration;
+                
+                // Feed silence to the plugin before stopping
+                if (this.sourceNode && window.canvasCompNode) {
+                    try {
+                        // Create a silent buffer
+                        const silentBuffer = this.audioContext.createBuffer(
+                            2, // stereo
+                            this.audioContext.sampleRate * 0.1, // 100ms of silence
+                            this.audioContext.sampleRate
+                        );
+                        
+                        // Create a new source with silence
+                        const silentSource = this.audioContext.createBufferSource();
+                        silentSource.buffer = silentBuffer;
+                        
+                        // Disconnect the current source and connect the silent one
+                        this.sourceNode.disconnect();
+                        silentSource.connect(window.canvasCompNode);
+                        silentSource.start(0);
+                        
+                        // Stop the original source
+                        this.sourceNode.stop(0);
+                        this.sourceNode = null;
+                        
+                        // After a brief moment, stop everything
+                        setTimeout(() => {
+                            try {
+                                silentSource.stop(0);
+                                silentSource.disconnect();
+                            } catch (e) {}
+                            
+                            // Now disconnect the plugin
+                            if (window.canvasCompNode) {
+                                window.canvasCompNode.disconnect();
+                                window.canvasCompNode.connect(this.gainNode);
+                            }
+                        }, 100);
+                    } catch (e) {
+                        console.error('Error feeding silence:', e);
+                    }
+                } else if (this.sourceNode) {
+                    // No plugin, just stop normally
+                    try {
+                        this.sourceNode.stop(0);
+                        this.sourceNode.disconnect();
+                    } catch (e) {}
+                    this.sourceNode = null;
+                }
+                
+                // Mute output
+                this.gainNode.gain.cancelScheduledValues(this.audioContext.currentTime);
+                this.gainNode.gain.value = 0;
+                
+                // Restore gain after a moment
+                setTimeout(() => {
+                    this.gainNode.gain.value = this.volumeSlider.value / 100;
+                }, 150);
+                
+                this.isPlaying = false;
+                this.playBtn.innerHTML = '<i class="fas fa-play"></i>';
+            }
+            
+            pause() {
+                this.stop();
+            }
+            
+            reconnectThroughPlugin() {
+                if (!this.isPlaying || !window.canvasCompNode) return;
+                
+                console.log('Reconnecting audio through plugin...');
+                
+                // Store current playback position
+                const currentTime = this.audioContext.currentTime - this.startTime;
+                
+                // Stop current playback
+                this.stop();
+                
+                // Restart with plugin connection
+                this.pauseTime = currentTime;
+                this.play();
+            }
+            
+            togglePlay() {
+                if (this.currentTrackIndex === -1) {
+                    this.loadTrack(0);
+                } else if (this.isPlaying) {
+                    this.pause();
+                } else {
+                    this.play();
+                }
+            }
+            
+            playPrevious() {
+                if (this.currentTrackIndex > 0) {
+                    this.loadTrack(this.currentTrackIndex - 1);
+                } else {
+                    this.loadTrack(this.tracks.length - 1);
+                }
+            }
+            
+            playNext() {
+                if (this.currentTrackIndex < this.tracks.length - 1) {
+                    this.loadTrack(this.currentTrackIndex + 1);
+                } else {
+                    this.loadTrack(0);
+                }
+            }
+        }
+        
+        // Initialize audio player when page loads
+        window.addEventListener('DOMContentLoaded', () => {
+            new AudioPlayer();
+            
+            // Check if user has dismissed the zoom hint
+            if (localStorage.getItem('hideCanvasCompZoomHint') === 'true') {
+                const hint = document.getElementById('mobileZoomHint');
+                if (hint) {
+                    hint.style.display = 'none';
+                }
+            }
+            
+            // Debug: Add specific touch handling for the controls panel
+            setTimeout(() => {
+                const controlsPanel = document.querySelector('#canvasCompContainer .controls');
+                if (controlsPanel) {
+                    console.log('Controls panel found, adding specific touch handlers');
+                    
+                    let scrolling = false;
+                    let startY = 0;
+                    
+                    // Handle touch on the controls panel
+                    controlsPanel.addEventListener('touchstart', (e) => {
+                        // If touching a control (input, button, etc), don't interfere
+                        if (e.target.matches('input, button, select, label')) {
+                            scrolling = false;
+                            return;
+                        }
+                        
+                        // This is a scroll attempt
+                        scrolling = true;
+                        startY = e.touches[0].clientY;
+                        e.stopPropagation();
+                        e.stopImmediatePropagation();
+                    }, { passive: false, capture: true });
+                    
+                    controlsPanel.addEventListener('touchmove', (e) => {
+                        if (!scrolling) return;
+                        
+                        const currentY = e.touches[0].clientY;
+                        const deltaY = startY - currentY;
+                        
+                        // Manually scroll the panel
+                        controlsPanel.scrollTop += deltaY;
+                        startY = currentY;
+                        
+                        // Prevent page scroll
+                        e.preventDefault();
+                        e.stopPropagation();
+                        e.stopImmediatePropagation();
+                    }, { passive: false, capture: true });
+                    
+                    controlsPanel.addEventListener('touchend', (e) => {
+                        if (scrolling) {
+                            scrolling = false;
+                            e.stopPropagation();
+                            e.stopImmediatePropagation();
+                        }
+                    }, { passive: false, capture: true });
+                    
+                    // Also prevent the document touch handlers from interfering
+                    controlsPanel.addEventListener('touchstart', (e) => {
+                        if (!e.target.matches('input, button, select, label')) {
+                            e.stopImmediatePropagation();
+                        }
+                    }, false);
+                    
+                    // Force the controls panel to be scrollable
+                    controlsPanel.style.overflowY = 'auto';
+                    controlsPanel.style.webkitOverflowScrolling = 'touch';
+                    controlsPanel.style.touchAction = 'pan-y';
+                    
+                    // Add a visual indicator that scrolling is available if content overflows
+                    if (controlsPanel.scrollHeight > controlsPanel.clientHeight) {
+                        console.log('Controls panel is scrollable - content height:', controlsPanel.scrollHeight, 'visible height:', controlsPanel.clientHeight);
+                    }
+                    
+                    console.log('Touch handlers added to controls panel');
+                } else {
+                    console.log('Controls panel not found yet, retrying...');
+                }
+            }, 2000); // Wait for plugin to fully load
+        });
+    </script>
+
+    <!-- Shopify Buy Button -->
+    <script type="text/javascript">
+    /*<![CDATA[*/
+    (function () {
+      var scriptURL = 'https://sdks.shopifycdn.com/buy-button/latest/buy-button-storefront.min.js';
+      if (window.ShopifyBuy) {
+        if (window.ShopifyBuy.UI) {
+          ShopifyBuyInit();
+        } else {
+          loadScript();
+        }
+      } else {
+        loadScript();
+      }
+      function loadScript() {
+        var script = document.createElement('script');
+        script.async = true;
+        script.src = scriptURL;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(script);
+        script.onload = ShopifyBuyInit;
+      }
+      function ShopifyBuyInit() {
+        var client = ShopifyBuy.buildClient({
+          domain: 'vckhed-ia.myshopify.com',
+          storefrontAccessToken: 'df7325f00afa869a92034415d3428d8e',
+        });
+        ShopifyBuy.UI.onReady(client).then(function (ui) {
+          ui.createComponent('product', {
+            id: '7859012075659',
+            node: document.getElementById('canvas-compressor-buy-button'),
+            moneyFormat: '%24%7B%7Bamount%7D%7D',
+            options: {
+              "product": {
+                "styles": {
+                  "product": {
+                    "@media (min-width: 601px)": {
+                      "max-width": "280px",
+                      "margin-left": "0",
+                      "margin-bottom": "0"
+                    }
+                  },
+                  "button": {
+                    "font-family": "Inter, sans-serif",
+                    "font-weight": "600",
+                    "font-size": "16px",
+                    ":hover": {
+                      "background-color": "#005f8f",
+                      "background": "#005f8f"
+                    },
+                    "background-color": "#0077b6",
+                    ":focus": {
+                      "background-color": "#005f8f"
+                    },
+                    "border-radius": "12px",
+                    "padding": "16px 32px",
+                    "background": "linear-gradient(135deg, #0077b6 0%, #00b4d8 100%)",
+                    "color": "#ffffff",
+                    "width": "100%"
+                  }
+                },
+                "buttonDestination": "checkout",
+                "contents": {
+                  "img": false,
+                  "imgWithCarousel": false,
+                  "title": false,
+                  "price": false,
+                  "options": false
+                },
+                "text": {
+                  "button": "Purchase Now"
+                }
+              },
+              "productSet": {
+                "styles": {
+                  "products": {
+                    "@media (min-width: 601px)": {
+                      "margin-left": "-20px"
+                    }
+                  }
+                }
+              },
+              "modalProduct": {
+                "contents": {
+                  "img": false,
+                  "imgWithCarousel": true,
+                  "button": false,
+                  "buttonWithQuantity": true
+                },
+                "styles": {
+                  "product": {
+                    "@media (min-width: 601px)": {
+                      "max-width": "100%",
+                      "margin-left": "0px",
+                      "margin-bottom": "0px"
+                    }
+                  },
+                  "button": {
+                    "font-family": "Inter, sans-serif",
+                    "font-weight": "600",
+                    ":hover": {
+                      "background-color": "#005f8f"
+                    },
+                    "background-color": "#0077b6",
+                    ":focus": {
+                      "background-color": "#005f8f"
+                    }
+                  }
+                },
+                "text": {
+                  "button": "Add to cart"
+                }
+              },
+              "option": {},
+              "cart": {
+                "styles": {
+                  "button": {
+                    "font-family": "Inter, sans-serif",
+                    "font-weight": "600",
+                    ":hover": {
+                      "background-color": "#005f8f"
+                    },
+                    "background-color": "#0077b6",
+                    ":focus": {
+                      "background-color": "#005f8f"
+                    }
+                  }
+                },
+                "text": {
+                  "total": "Subtotal",
+                  "button": "Checkout"
+                }
+              },
+              "toggle": {
+                "styles": {
+                  "toggle": {
+                    "font-family": "Inter, sans-serif",
+                    "background-color": "#0077b6",
+                    ":hover": {
+                      "background-color": "#005f8f"
+                    },
+                    ":focus": {
+                      "background-color": "#005f8f"
+                    }
+                  }
+                }
+              }
+            },
+          });
+        });
+      }
+    })();
+    /*]]>*/
+    </script>
+    
+    <!-- Canvas Comp Demo Button -->
+    <script type="text/javascript">
+    /*<![CDATA[*/
+    (function () {
+      var scriptURL = 'https://sdks.shopifycdn.com/buy-button/latest/buy-button-storefront.min.js';
+      if (window.ShopifyBuy) {
+        if (window.ShopifyBuy.UI) {
+          ShopifyBuyInitDemo();
+        } else {
+          loadScriptDemo();
+        }
+      } else {
+        loadScriptDemo();
+      }
+      function loadScriptDemo() {
+        var script = document.createElement('script');
+        script.async = true;
+        script.src = scriptURL;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(script);
+        script.onload = ShopifyBuyInitDemo;
+      }
+      function ShopifyBuyInitDemo() {
+        var client = ShopifyBuy.buildClient({
+          domain: 'vckhed-ia.myshopify.com',
+          storefrontAccessToken: 'df7325f00afa869a92034415d3428d8e',
+        });
+        ShopifyBuy.UI.onReady(client).then(function (ui) {
+          ui.createComponent('product', {
+            id: '7860529889419',
+            node: document.getElementById('canvas-compressor-demo-button'),
+            moneyFormat: '%24%7B%7Bamount%7D%7D',
+            options: {
+              "product": {
+                "styles": {
+                  "product": {
+                    "@media (min-width: 601px)": {
+                      "max-width": "280px",
+                      "margin-left": "0",
+                      "margin-bottom": "0"
+                    }
+                  },
+                  "button": {
+                    "font-family": "Inter, sans-serif",
+                    "font-weight": "600",
+                    "font-size": "16px",
+                    "padding-left": "32px",
+                    "padding-right": "32px",
+                    "color": "#ffffff",
+                    "background": "linear-gradient(135deg, #0077b6 0%, #90e0ef 100%)",
+                    "border-radius": "12px",
+                    "height": "50px",
+                    ":hover": {
+                      "background": "linear-gradient(135deg, #005f8f 0%, #7cc7d6 100%)"
+                    },
+                    ":focus": {
+                      "background": "linear-gradient(135deg, #005f8f 0%, #7cc7d6 100%)"
+                    }
+                  },
+                  "price": {
+                    "display": "none"
+                  },
+                  "compareAt": {
+                    "display": "none"
+                  },
+                  "unitPrice": {
+                    "display": "none"
+                  },
+                  "description": {
+                    "display": "none"
+                  },
+                  "title": {
+                    "display": "none"
+                  }
+                },
+                "buttonDestination": "checkout",
+                "contents": {
+                  "img": false,
+                  "imgWithCarousel": false,
+                  "title": false,
+                  "price": false,
+                  "options": false
+                },
+                "text": {
+                  "button": "Download Trial"
+                }
+              },
+              "productSet": {
+                "styles": {
+                  "products": {
+                    "@media (min-width: 601px)": {
+                      "margin-left": "-20px"
+                    }
+                  }
+                }
+              },
+              "modalProduct": {
+                "contents": {
+                  "img": false,
+                  "imgWithCarousel": true,
+                  "button": false,
+                  "buttonWithQuantity": true
+                },
+                "styles": {
+                  "product": {
+                    "@media (min-width: 601px)": {
+                      "max-width": "100%",
+                      "margin-left": "0px",
+                      "margin-bottom": "0px"
+                    }
+                  },
+                  "button": {
+                    "font-family": "Inter, sans-serif",
+                    "font-weight": "600",
+                    "font-size": "16px",
+                    "padding-left": "32px",
+                    "padding-right": "32px",
+                    ":hover": {
+                      "background-color": "#29712d"
+                    },
+                    "background-color": "#2e7d32",
+                    ":focus": {
+                      "background-color": "#29712d"
+                    }
+                  }
+                },
+                "text": {
+                  "button": "Add to cart"
+                }
+              },
+              "option": {},
+              "cart": {
+                "styles": {
+                  "button": {
+                    ":hover": {
+                      "background-color": "#29712d"
+                    },
+                    "background-color": "#2e7d32",
+                    ":focus": {
+                      "background-color": "#29712d"
+                    }
+                  }
+                },
+                "text": {
+                  "total": "Subtotal",
+                  "button": "Checkout"
+                }
+              },
+              "toggle": {
+                "styles": {
+                  "toggle": {
+                    "background-color": "#2e7d32",
+                    ":hover": {
+                      "background-color": "#29712d"
+                    },
+                    ":focus": {
+                      "background-color": "#29712d"
+                    }
+                  }
+                }
+              }
+            },
+          });
+        });
+      }
+    })();
+    /*]]>*/
+    </script>
+</body>
+</html>

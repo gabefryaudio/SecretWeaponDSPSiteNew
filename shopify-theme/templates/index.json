@@ -1,0 +1,49 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero-banner",
+      "settings": {
+        "badge_text": "Professional Audio Processing",
+        "title_line1": "The",
+        "title_gradient": "Secret Weapon",
+        "title_line2": "For Your Mix",
+        "description": "Cutting-edge audio plugins that bring analog warmth and digital precision to your productions. Designed by engineers, crafted for artists.",
+        "button_1_text": "Shop Plugins",
+        "button_1_link": "/collections/all",
+        "button_1_icon": "fas fa-rocket",
+        "button_2_text": "Try Demo",
+        "button_2_link": "/pages/demo",
+        "button_2_icon": "fas fa-play"
+      }
+    },
+    "featured_products": {
+      "type": "featured-products",
+      "settings": {
+        "badge_text": "Our Plugins",
+        "badge_icon": "fas fa-cube",
+        "title": "Professional Audio",
+        "title_gradient": "Plugins",
+        "description": "Discover our range of meticulously crafted audio processing tools."
+      },
+      "blocks": {
+        "product_1": {
+          "type": "product",
+          "settings": {
+            "product": ""
+          }
+        },
+        "product_2": {
+          "type": "product",
+          "settings": {
+            "product": ""
+          }
+        }
+      },
+      "block_order": ["product_1", "product_2"]
+    }
+  },
+  "order": [
+    "hero",
+    "featured_products"
+  ]
+}

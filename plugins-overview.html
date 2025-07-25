@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plugins - Secret Weapon DSP</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            --dark-bg: #0a0a0f;
+            --darker-bg: #050507;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --text-primary: rgba(255, 255, 255, 0.95);
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-tertiary: rgba(255, 255, 255, 0.5);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --hover-bg: rgba(255, 255, 255, 0.05);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(244, 63, 94, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(240, 147, 251, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+            opacity: 0.6;
+            animation: bgShift 30s ease-in-out infinite;
+            z-index: -1;
+        }
+        
+        @keyframes bgShift {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            33% { transform: scale(1.1) rotate(120deg); }
+            66% { transform: scale(0.9) rotate(240deg); }
+        }
+        
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 15, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        nav.scrolled {
+            background: rgba(5, 5, 7, 0.95);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0.75rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            height: 90px;
+        }
+        
+        .logo img {
+            height: 100%;
+            width: auto;
+            clip-path: inset(0 0 15% 0);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-gradient);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--text-primary);
+        }
+        
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+        
+        /* Page Header */
+        .page-header {
+            padding: 10rem 2rem 4rem;
+            text-align: center;
+            position: relative;
+        }
+        
+        .page-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+        
+        .gradient-text {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .page-description {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+        
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 3rem 0;
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+        }
+        
+        .filter-tab {
+            padding: 0.75rem 2rem;
+            background: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-tab:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            color: var(--text-primary);
+        }
+        
+        .filter-tab.active {
+            background: var(--primary-gradient);
+            border-color: transparent;
+            color: white;
+        }
+        
+        /* Plugins Grid */
+        .plugins-section {
+            padding: 4rem 2rem 6rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .plugins-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 3rem;
+        }
+        
+        .plugin-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            overflow: hidden;
+            position: relative;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            animation: fadeInUp 0.8s ease-out both;
+        }
+        
+        .plugin-card:nth-child(1) { animation-delay: 0.8s; }
+        .plugin-card:nth-child(2) { animation-delay: 0.9s; }
+        .plugin-card:nth-child(3) { animation-delay: 1.0s; }
+        
+        .plugin-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--plugin-gradient);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        
+        .plugin-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+        }
+        
+        .plugin-card:hover::before {
+            opacity: 0.05;
+        }
+        
+        .plugin-card.canvas-compressor {
+            --plugin-gradient: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%);
+            --plugin-accent: #00b4d8;
+        }
+        
+        .plugin-card.quantum-eq {
+            --plugin-gradient: linear-gradient(135deg, #ff4365 0%, #f093fb 100%);
+            --plugin-accent: #ff4365;
+        }
+        
+        .plugin-card.coming-soon {
+            --plugin-gradient: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+            --plugin-accent: #4a5568;
+            opacity: 0.7;
+            cursor: default;
+        }
+        
+        .plugin-visual {
+            height: 300px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, transparent 100%);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .plugin-visual-content {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .plugin-visual-icon {
+            font-size: 4rem;
+            background: var(--plugin-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+        
+        .plugin-visual-bg {
+            position: absolute;
+            inset: 0;
+            background: var(--plugin-gradient);
+            opacity: 0.1;
+            filter: blur(100px);
+        }
+        
+        .plugin-content {
+            padding: 2.5rem;
+        }
+        
+        .plugin-content h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .plugin-tagline {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+        
+        .plugin-features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .plugin-feature {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+        
+        .plugin-feature i {
+            color: var(--plugin-accent);
+            font-size: 1.25rem;
+        }
+        
+        .plugin-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .btn {
+            padding: 0.875rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.95rem;
+            flex: 1;
+            justify-content: center;
+        }
+        
+        .btn-primary {
+            background: var(--plugin-gradient);
+            color: white;
+            border: 0;
+        }
+        
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(-100%);
+            transition: transform 0.5s ease;
+        }
+        
+        .btn-primary:hover::before {
+            transform: translateX(0);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .coming-soon-badge {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        
+        /* Newsletter Section */
+        .newsletter {
+            padding: 4rem 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .newsletter-content {
+            padding: 4rem;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(240, 147, 251, 0.1) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .newsletter h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .newsletter-form {
+            display: flex;
+            gap: 1rem;
+            max-width: 500px;
+            margin: 2rem auto 0;
+        }
+        
+        .newsletter-form input {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+        }
+        
+        .newsletter-form input::placeholder {
+            color: var(--text-tertiary);
+        }
+        
+        /* Footer */
+        footer {
+            padding: 4rem 2rem 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 4rem;
+            margin-bottom: 3rem;
+        }
+        
+        .footer-brand h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+        
+        .footer-brand p {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            max-width: 300px;
+        }
+        
+        .footer-section h4 {
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-tertiary);
+            margin-bottom: 1.5rem;
+        }
+        
+        .footer-section ul {
+            list-style: none;
+        }
+        
+        .footer-section a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            display: block;
+            padding: 0.5rem 0;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-section a:hover {
+            color: var(--text-primary);
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-tertiary);
+            font-size: 0.875rem;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+        
+        .social-links a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            transform: translateY(-2px);
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Hamburger Menu */
+        .hamburger {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            position: relative;
+            width: 30px;
+            height: 30px;
+            z-index: 1001;
+        }
+        
+        .hamburger span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background: var(--text-primary);
+            margin: 5px 0;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+        
+        /* Mobile Navigation */
+        .nav-links.mobile-active {
+            display: flex;
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 100%;
+            max-width: 300px;
+            height: 100vh;
+            background: rgba(10, 10, 15, 0.98);
+            backdrop-filter: blur(20px);
+            flex-direction: column;
+            padding: 6rem 2rem 2rem;
+            gap: 1.5rem;
+            align-items: flex-start;
+            box-shadow: -10px 0 40px rgba(0, 0, 0, 0.5);
+            animation: slideIn 0.3s ease;
+            z-index: 999;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+        
+        .nav-links.mobile-active a {
+            font-size: 1.125rem;
+            width: 100%;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        /* Mobile Overlay */
+        .mobile-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 998;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .mobile-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+        
+        /* Mobile */
+        @media (max-width: 768px) {
+            /* Fix nav container padding on mobile */
+            .nav-container {
+                padding: 0.75rem 1rem;
+                max-width: 100%;
+            }
+            
+            /* Ensure logo doesn't push hamburger off screen */
+            .logo {
+                height: 60px;
+                max-width: 200px;
+            }
+            
+            .logo img {
+                height: 100%;
+                width: auto;
+                max-width: 100%;
+            }
+            
+            .hamburger {
+                display: block;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .plugins-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .plugin-features {
+                grid-template-columns: 1fr;
+            }
+            
+            .plugin-actions {
+                flex-direction: column;
+            }
+            
+            .newsletter-form {
+                flex-direction: column;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                text-align: center;
+            }
+            
+            .footer-brand p {
+                margin: 0 auto;
+            }
+            
+            .social-links {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+    
+    <nav id="navbar">
+        <div class="nav-container">
+            <a href="secretweapon-homepage.html" class="logo">
+                <img src="images/secret-weapon-dsp-logo.svg" alt="Secret Weapon DSP">
+            </a>
+            <div class="nav-links">
+                <a href="secretweapon-homepage.html">Home</a>
+                <a href="plugins-overview.html" class="active">Plugins</a>
+                <a href="support-page.html">Support</a>
+                <a href="contact-page.html">Contact</a>
+            </div>
+            <button class="hamburger" id="hamburger" aria-label="Toggle navigation menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+    
+    <section class="page-header">
+        <div class="page-badge">
+            <i class="fas fa-cube"></i>
+            Professional Audio Plugins
+        </div>
+        <h1>Our <span class="gradient-text">Plugin Collection</span></h1>
+        <p class="page-description">
+            Discover our range of meticulously crafted audio processing tools, 
+            each designed to solve specific challenges in modern music production.
+            <br><span style="color: #38f9d7; font-weight: 600; margin-top: 0.5rem; display: inline-block;">✓ No iLok Required</span>
+        </p>
+        
+        <div class="filter-tabs">
+            <button class="filter-tab active" data-filter="all">All Plugins</button>
+            <button class="filter-tab" data-filter="dynamics">Dynamics</button>
+            <button class="filter-tab" data-filter="eq">EQ & Filters</button>
+        </div>
+    </section>
+    
+    <section class="plugins-section">
+        <div class="plugins-grid">
+            <!-- Canvas Comp -->
+            <div class="plugin-card canvas-compressor" data-category="dynamics">
+                <div class="plugin-visual">
+                    <div class="plugin-visual-bg"></div>
+                    <div class="plugin-visual-content">
+                        <div class="plugin-visual-icon">
+                            <i class="fas fa-bezier-curve"></i>
+                        </div>
+                        <img src="/images/canvas-compressor-preview.png" alt="Canvas Comp" style="max-width: 80%; height: auto; display: none;">
+                    </div>
+                </div>
+                <div class="plugin-content">
+                    <h3>Canvas Comp</h3>
+                    <p class="plugin-tagline">Design your own custom compressor and waveshaper curves</p>
+                    
+                    <div class="plugin-features">
+                        <div class="plugin-feature">
+                            <i class="fas fa-bezier-curve"></i>
+                            <span>Compression Curve Design</span>
+                        </div>
+                        <div class="plugin-feature">
+                            <i class="fas fa-wave-square"></i>
+                            <span>Custom Waveshaper Design</span>
+                        </div>
+                        <div class="plugin-feature">
+                            <i class="fas fa-brain"></i>
+                            <span>Adaptive Timing</span>
+                        </div>
+                        <div class="plugin-feature">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>Learn By Drawing</span>
+                        </div>
+                    </div>
+                    
+                    <div class="plugin-actions">
+                        <a href="canvas-compressor-page.html" class="btn btn-primary">
+                            <i class="fas fa-info-circle"></i>
+                            Learn More
+                        </a>
+                        <a href="canvas-compressor-page.html#demo" class="btn btn-secondary">
+                            <i class="fas fa-play"></i>
+                            Try Demo
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quantum EQ -->
+            <div class="plugin-card quantum-eq" data-category="eq">
+                <div class="plugin-visual">
+                    <div class="plugin-visual-bg"></div>
+                    <div class="plugin-visual-content">
+                        <div class="plugin-visual-icon">
+                            <i class="fas fa-wave-square"></i>
+                        </div>
+                        <img src="/images/quantum-eq-preview.png" alt="Quantum EQ" style="max-width: 80%; height: auto; display: none;">
+                    </div>
+                </div>
+                <div class="plugin-content">
+                    <h3>Quantum EQ</h3>
+                    <p class="plugin-tagline">Precision 10-band equalizer with real-time FFT analysis</p>
+                    
+                    <div class="plugin-features">
+                        <div class="plugin-feature">
+                            <i class="fas fa-spectrum"></i>
+                            <span>10 Full-Featured Bands</span>
+                        </div>
+                        <div class="plugin-feature">
+                            <i class="fas fa-chart-area"></i>
+                            <span>Real-time FFT Display</span>
+                        </div>
+                        <div class="plugin-feature">
+                            <i class="fas fa-filter"></i>
+                            <span>6 Filter Types</span>
+                        </div>
+                        <div class="plugin-feature">
+                            <i class="fas fa-magic"></i>
+                            <span>Asymmetric Curves</span>
+                        </div>
+                    </div>
+                    
+                    <div class="plugin-actions">
+                        <a href="quantum-eq-page.html" class="btn btn-primary">
+                            <i class="fas fa-info-circle"></i>
+                            Learn More
+                        </a>
+                        <a href="quantum-eq-page.html#demo" class="btn btn-secondary">
+                            <i class="fas fa-play"></i>
+                            Try Demo
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="newsletter" id="newsletter">
+        <div class="newsletter-content">
+            <h2>Stay <span class="gradient-text">Updated</span></h2>
+            <p class="section-description">
+                Be the first to know about new plugin releases, updates, and exclusive offers.
+            </p>
+            <form class="newsletter-form">
+                <input type="email" placeholder="Enter your email" required>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-paper-plane"></i>
+                    Subscribe
+                </button>
+            </form>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h3>Secret Weapon DSP</h3>
+                <p>Professional audio processing tools designed to elevate your productions to the next level.</p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/secretweapondsp" target="_blank" rel="noopener"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/secretweapondsp/" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.youtube.com/@secretweapondsp" target="_blank" rel="noopener"><i class="fab fa-youtube"></i></a>
+                    <a href="https://www.tiktok.com/@secretweapondsp" target="_blank" rel="noopener"><i class="fab fa-tiktok"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Products</h4>
+                <ul>
+                    <li><a href="canvas-compressor-page.html">Canvas Comp</a></li>
+                    <li><a href="quantum-eq-page.html">Quantum EQ</a></li>
+                    <li><a href="plugins-overview.html">All Plugins</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="/about">About Us</a></li>
+                    <li><a href="/blog">Blog</a></li>
+                    <li><a href="contact-page.html">Contact</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="support-page.html">Documentation</a></li>
+                    <li><a href="support-page.html#faq">FAQ</a></li>
+                    <li><a href="support-page.html#tutorials">Tutorials</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2025 Secret Weapon DSP. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+        
+        // Hamburger menu functionality
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.querySelector('.nav-links');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+        const body = document.body;
+        
+        function toggleMobileMenu() {
+            hamburger.classList.toggle('active');
+            navLinks.classList.toggle('mobile-active');
+            mobileOverlay.classList.toggle('active');
+            body.style.overflow = body.style.overflow === 'hidden' ? '' : 'hidden';
+        }
+        
+        hamburger.addEventListener('click', toggleMobileMenu);
+        
+        mobileOverlay.addEventListener('click', () => {
+            if (navLinks.classList.contains('mobile-active')) {
+                toggleMobileMenu();
+            }
+        });
+        
+        // Close menu when clicking on a link
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (navLinks.classList.contains('mobile-active')) {
+                    toggleMobileMenu();
+                }
+            });
+        });
+        
+        // Filter tabs functionality
+        const filterTabs = document.querySelectorAll('.filter-tab');
+        const pluginCards = document.querySelectorAll('.plugin-card');
+        
+        filterTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Update active tab
+                filterTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // Filter plugins
+                const filter = tab.dataset.filter;
+                pluginCards.forEach(card => {
+                    if (filter === 'all' || card.dataset.category === filter) {
+                        card.style.display = 'block';
+                        setTimeout(() => {
+                            card.style.opacity = '1';
+                            card.style.transform = 'translateY(0)';
+                        }, 100);
+                    } else {
+                        card.style.opacity = '0';
+                        card.style.transform = 'translateY(20px)';
+                        setTimeout(() => {
+                            card.style.display = 'none';
+                        }, 300);
+                    }
+                });
+            });
+        });
+        
+        // Newsletter form
+        const newsletterForm = document.querySelector('.newsletter-form');
+        newsletterForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            // Add your newsletter subscription logic here
+            alert('Thank you for subscribing!');
+            newsletterForm.reset();
+        });
+    </script>
+</body>
+</html>

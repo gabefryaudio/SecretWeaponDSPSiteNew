@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum EQ Direct Test</title>
+    <style>
+        body {
+            background: #000;
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            margin: 0;
+        }
+        
+        #status {
+            margin: 20px 0;
+            padding: 20px;
+            background: #1a1a1a;
+            border-radius: 8px;
+        }
+        
+        .error {
+            color: #ff4365;
+        }
+        
+        .success {
+            color: #4caf50;
+        }
+        
+        iframe {
+            width: 1200px;
+            height: 700px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Quantum EQ Direct Test</h1>
+    
+    <div id="status">
+        <p>Loading Quantum EQ plugin...</p>
+    </div>
+    
+    <iframe src="WASM/Quantum EQ 1.0/index.html" id="pluginFrame"></iframe>
+    
+    <script>
+        const status = document.getElementById('status');
+        const iframe = document.getElementById('pluginFrame');
+        
+        iframe.onload = () => {
+            status.innerHTML = '<p class="success">Plugin iframe loaded successfully. The plugin should appear below.</p>';
+        };
+        
+        iframe.onerror = (error) => {
+            status.innerHTML = '<p class="error">Error loading plugin: ' + error + '</p>';
+        };
+    </script>
+</body>
+</html>

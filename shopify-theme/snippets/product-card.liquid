@@ -1,0 +1,96 @@
+{% comment %}
+  Product Card Snippet
+  Usage: {% render 'product-card', product: product %}
+{% endcomment %}
+
+<div class="product-card" onclick="window.location.href='{{ product.url }}'">
+  <div class="product-image">
+    {% if product.featured_image %}
+      <img src="{{ product.featured_image | img_url: '600x600' }}" 
+           alt="{{ product.featured_image.alt | escape }}"
+           loading="lazy">
+    {% else %}
+      <div class="placeholder-image">
+        <i class="fas fa-cube"></i>
+      </div>
+    {% endif %}
+    
+    {% if product.compare_at_price > product.price %}
+      <span class="product-badge sale">Sale</span>
+    {% endif %}
+    
+    {% unless product.available %}
+      <span class="product-badge sold-out">Sold Out</span>
+    {% endunless %}
+  </div>
+  
+  <div class="product-content">
+    <h3 class="product-title">{{ product.title }}</h3>
+    
+    <div class="product-price">
+      {% if product.compare_at_price > product.price %}
+        <span class="price-compare">{{ product.compare_at_price | money }}</span>
+      {% endif %}
+      <span class="price-current">{{ product.price | money }}</span>
+    </div>
+    
+    {% if product.description != blank %}
+      <p class="product-description">{{ product.description | strip_html | truncate: 150 }}</p>
+    {% endif %}
+    
+    {% if product.available %}
+      <form action="/cart/add" method="post" enctype="multipart/form-data" class="product-form-card">
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+        <button type="submit" class="btn btn-primary btn-add-to-cart">
+          <i class="fas fa-shopping-cart"></i>
+          Add to Cart
+        </button>
+      </form>
+    {% else %}
+      <button class="btn btn-secondary btn-add-to-cart" disabled>
+        Sold Out
+      </button>
+    {% endif %}
+  </div>
+</div>
+
+<style>
+  .product-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    z-index: 2;
+  }
+  
+  .product-badge.sale {
+    background: var(--primary-gradient);
+    color: white;
+  }
+  
+  .product-badge.sold-out {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    color: var(--text-secondary);
+  }
+  
+  .price-compare {
+    text-decoration: line-through;
+    color: var(--text-tertiary);
+    font-size: 0.875rem;
+    margin-right: 0.5rem;
+  }
+  
+  .price-current {
+    font-size: 1.25rem;
+    font-weight: 600;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+</style>

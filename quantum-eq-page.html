@@ -1,0 +1,2807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum EQ - Secret Weapon DSP</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Mobile Plugin Support -->
+    <script src="mobile-plugin-support.js"></script>
+    
+    
+    <style>
+        :root {
+            /* Quantum EQ Theme Colors */
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            --band-gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --band-gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --band-gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --band-gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --band-gradient-5: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            --dark-bg: #000;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --text-primary: rgba(255, 255, 255, 0.95);
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-tertiary: rgba(255, 255, 255, 0.5);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --accent-red: #ff4365;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* Premium Background Animation */
+        .quantum-bg {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: -2;
+        }
+        
+        .quantum-animation {
+            position: fixed;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 119, 198, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(255, 219, 98, 0.08) 0%, transparent 50%);
+            z-index: -1;
+            opacity: 0.5;
+            animation: quantumPulse 20s ease-in-out infinite;
+        }
+        
+        @keyframes quantumPulse {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(1.05); }
+        }
+        
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
+            backdrop-filter: blur(40px) saturate(150%);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        nav.scrolled {
+            background: rgba(0, 0, 0, 0.95);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0.75rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            height: 90px;
+        }
+        
+        .logo img {
+            height: 100%;
+            width: auto;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-gradient);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 10rem 2rem 4rem;
+            text-align: center;
+            position: relative;
+        }
+        
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        .hero-badge i {
+            color: #f093fb;
+        }
+        
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 5rem;
+            font-weight: 300;
+            margin-bottom: 1.5rem;
+            letter-spacing: 6px;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+            position: relative;
+        }
+        
+        .hero-description {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 3rem auto;
+            line-height: 1.8;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+        
+        .hero-actions {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+        }
+        
+        .btn {
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #ff4365 0%, #ff1744 100%);
+            color: white;
+            border: 0;
+            box-shadow: 0 8px 24px rgba(255, 67, 101, 0.4);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(255, 67, 101, 0.6);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Plugin Visual */
+        .plugin-visual {
+            padding: 4rem 2rem;
+            max-width: 1600px;
+            margin: 0 auto;
+            animation: fadeInUp 0.8s ease-out 0.8s both;
+        }
+        
+        .interface-showcase {
+            background: linear-gradient(135deg, #0a0a0f 0%, #14141f 100%);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            position: relative;
+            overflow: visible;
+            box-shadow: 
+                0 0 0 1px rgba(255,255,255,0.06),
+                inset 0 2px 8px rgba(0,0,0,0.5),
+                0 30px 60px rgba(0,0,0,0.5);
+        }
+        
+        .interface-glow {
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, 
+                transparent 30%, 
+                rgba(102, 126, 234, 0.3) 50%, 
+                transparent 70%);
+            background-size: 200% 200%;
+            animation: glowMove 8s linear infinite;
+            border-radius: 20px;
+            opacity: 0.5;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        @keyframes glowMove {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 200% 200%; }
+        }
+        
+        .interface-preview {
+            min-height: 700px;
+            display: flex;
+            align-items: stretch;
+            justify-content: center;
+            position: relative;
+            background: #0a0a0f;
+            border-radius: 12px;
+            overflow: visible;
+        }
+        
+        #pluginContainer {
+            width: 100%;
+            min-height: 700px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #pluginFrame {
+            flex: 1;
+            min-height: 700px;
+        }
+        
+        #pluginContainer > div {
+            width: 100% !important;
+            height: 100% !important;
+        }
+        
+        #quantumEQContainer {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #quantumEQContainer > * {
+            margin: 0 auto;
+        }
+        
+        @keyframes pluginSpin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Band Colors Display */
+        .band-colors {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .band-color {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .band-color:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .band-color::after {
+            content: attr(data-band);
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 6rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        
+        .section-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50px;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+        
+        h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .gradient-text {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+        
+        .feature-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--feature-gradient);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .feature-icon {
+            display: none;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-card p {
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+        
+        /* Dynamic gradient for each feature */
+        .feature-card:nth-child(1) { --feature-gradient: var(--band-gradient-1); }
+        .feature-card:nth-child(2) { --feature-gradient: var(--band-gradient-2); }
+        .feature-card:nth-child(3) { --feature-gradient: var(--band-gradient-3); }
+        .feature-card:nth-child(4) { --feature-gradient: var(--band-gradient-4); }
+        .feature-card:nth-child(5) { --feature-gradient: var(--band-gradient-5); }
+        .feature-card:nth-child(6) { --feature-gradient: var(--band-gradient-1); }
+        
+        
+        /* Specs Section */
+        .specs {
+            padding: 4rem 2rem;
+            background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 100%);
+        }
+        
+        .specs-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+        }
+        
+        .spec-item {
+            text-align: center;
+        }
+        
+        .spec-icon {
+            font-size: 3rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+        
+        .spec-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .spec-label {
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+        }
+        
+        /* Filter Types */
+        .filter-types {
+            padding: 6rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .filter-type {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .filter-type:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-5px);
+            border-color: var(--accent-red);
+            box-shadow: 0 10px 30px rgba(255, 67, 101, 0.2);
+        }
+        
+        .filter-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent-red);
+        }
+        
+        .filter-shape-img {
+            width: 100%;
+            height: 80px;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem;
+        }
+        
+        .filter-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .filter-description {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Purchase Section */
+        .purchase {
+            padding: 6rem 2rem;
+            text-align: center;
+            position: relative;
+        }
+        
+        .purchase-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 4rem;
+            background: linear-gradient(135deg, rgba(255, 67, 101, 0.1) 0%, rgba(240, 147, 251, 0.1) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .purchase-content::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: var(--primary-gradient);
+            border-radius: 24px;
+            opacity: 0.5;
+            filter: blur(20px);
+            z-index: -1;
+        }
+        
+        .price {
+            font-size: 4rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 2rem 0;
+        }
+        
+        /* Footer */
+        footer {
+            padding: 4rem 2rem 2rem;
+            border-top: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.5);
+        }
+        
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        
+        .social-links a {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+        
+        .social-links a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            transform: translateY(-3px);
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Audio Player Styles */
+        .audio-demos {
+            padding: 3rem 2rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .audio-player-container {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .audio-player {
+            width: 100%;
+            max-width: 500px;
+            background: linear-gradient(135deg, rgba(15, 15, 20, 0.95) 0%, rgba(20, 20, 30, 0.95) 100%);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: 
+                0 0 0 1px rgba(255,255,255,0.06),
+                inset 0 2px 8px rgba(0,0,0,0.5),
+                0 15px 30px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .audio-player::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+            animation: quantumPulse 10s ease-in-out infinite;
+            pointer-events: none;
+        }
+        
+        .now-playing {
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+            display: none; /* Hide the now playing section to save space */
+        }
+        
+        .track-info {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        
+        .track-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.25rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .track-info p {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+        
+        .waveform-container {
+            position: relative;
+            width: 100%;
+            height: 60px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        
+        #waveform {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.5;
+        }
+        
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--primary-gradient);
+            transition: width 0.1s linear;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.8);
+        }
+        
+        .player-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .control-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+        
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.05);
+        }
+        
+        .play-btn {
+            width: 50px;
+            height: 50px;
+            background: var(--primary-gradient);
+            font-size: 1.2rem;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .play-btn:hover {
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.6);
+        }
+        
+        .time-display {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-family: 'Space Grotesk', monospace;
+            min-width: 100px;
+            text-align: center;
+        }
+        
+        .time-separator {
+            margin: 0 0.5rem;
+            opacity: 0.5;
+        }
+        
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .volume-control i {
+            color: var(--text-secondary);
+        }
+        
+        #volumeSlider {
+            width: 100px;
+            height: 4px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+        }
+        
+        #volumeSlider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--primary-gradient);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(102, 126, 234, 0.4);
+        }
+        
+        #volumeSlider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: var(--primary-gradient);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(102, 126, 234, 0.4);
+            border: none;
+        }
+        
+        .playlist {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .playlist-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .playlist-header h3 {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        
+        .ab-toggle {
+            display: flex;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 0.25rem;
+        }
+        
+        .ab-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        
+        .ab-btn.active {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
+        }
+        
+        .playlist-tracks {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .track-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .track-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateX(5px);
+        }
+        
+        .track-item.active {
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+        }
+        
+        .track-item.active .track-playing-indicator {
+            display: flex;
+        }
+        
+        .track-number {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+            min-width: 30px;
+        }
+        
+        .track-details {
+            flex: 1;
+            margin-left: 1rem;
+        }
+        
+        .track-details h4 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .track-details p {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        .track-duration {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+            margin-right: 1rem;
+        }
+        
+        .track-playing-indicator {
+            position: absolute;
+            right: 1rem;
+            display: none;
+            align-items: flex-end;
+            gap: 3px;
+            height: 20px;
+        }
+        
+        .track-playing-indicator span {
+            width: 3px;
+            background: var(--primary-gradient);
+            border-radius: 2px;
+            animation: soundWave 0.5s ease-in-out infinite;
+        }
+        
+        .track-playing-indicator span:nth-child(1) {
+            animation-delay: 0s;
+            height: 100%;
+        }
+        
+        .track-playing-indicator span:nth-child(2) {
+            animation-delay: 0.1s;
+            height: 60%;
+        }
+        
+        .track-playing-indicator span:nth-child(3) {
+            animation-delay: 0.2s;
+            height: 80%;
+        }
+        
+        @keyframes soundWave {
+            0%, 100% { transform: scaleY(0.5); }
+            50% { transform: scaleY(1); }
+        }
+        
+        /* New Compact Carousel Styles */
+        .track-carousel {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            gap: 1rem;
+        }
+        
+        .carousel-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+        
+        .carousel-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.1);
+        }
+        
+        .current-track {
+            flex: 1;
+            text-align: center;
+            min-width: 0;
+        }
+        
+        .track-info-compact h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .track-info-compact p {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .compact-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .compact-controls .play-btn {
+            width: 44px;
+            height: 44px;
+            font-size: 1.1rem;
+        }
+        
+        .compact-controls .ab-toggle {
+            display: flex;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            padding: 0.2rem;
+        }
+        
+        .compact-controls .ab-btn {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.75rem;
+        }
+        
+        .volume-mini {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .volume-mini i {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        .volume-mini input {
+            width: 60px;
+            height: 3px;
+        }
+        
+        .track-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .indicator {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .indicator:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+        
+        .indicator.active {
+            background: var(--primary-gradient);
+            width: 20px;
+            border-radius: 3px;
+        }
+        
+        /* Visual Connector Styles */
+        .visual-connector {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 0;
+            position: relative;
+        }
+        
+        .connector-line {
+            width: 2px;
+            height: 60px;
+            background: var(--primary-gradient);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .connector-line::after {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent 0%, rgba(255,255,255,0.8) 50%, transparent 100%);
+            animation: flowDown 2s linear infinite;
+        }
+        
+        @keyframes flowDown {
+            to { top: 100%; }
+        }
+        
+        .connector-arrow {
+            font-size: 2rem;
+            color: var(--text-primary);
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: pulseArrow 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulseArrow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(5px); }
+        }
+        
+        /* Hamburger Menu */
+        .hamburger {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            position: relative;
+            width: 30px;
+            height: 30px;
+            z-index: 1001;
+        }
+        
+        .hamburger span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background: var(--text-primary);
+            margin: 5px 0;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+        
+        /* Mobile Navigation */
+        .nav-links.mobile-active {
+            display: flex;
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 100vh;
+            background: rgba(10, 10, 15, 0.98);
+            backdrop-filter: blur(20px);
+            flex-direction: column;
+            padding: 6rem 1.5rem 2rem;
+            gap: 1.5rem;
+            align-items: flex-start;
+            box-shadow: -10px 0 40px rgba(0, 0, 0, 0.5);
+            animation: slideIn 0.3s ease;
+            z-index: 999;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+        
+        .nav-links.mobile-active a {
+            font-size: 1.125rem;
+            width: 100%;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        /* Mobile Overlay */
+        .mobile-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 998;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .mobile-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+        
+        /* Mobile */
+        @media (max-width: 768px) {
+            /* Fix nav container padding on mobile */
+            .nav-container {
+                padding: 0.75rem 1rem;
+                max-width: 100%;
+            }
+            
+            /* Ensure logo doesn't push hamburger off screen */
+            .logo {
+                height: 60px;
+                max-width: 200px;
+            }
+            
+            .logo img {
+                height: 100%;
+                width: auto;
+                max-width: 100%;
+            }
+            
+            .hamburger {
+                display: block;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            h1 {
+                font-size: 3rem;
+                letter-spacing: 3px;
+            }
+            
+            h1::after {
+                font-size: 8px;
+                letter-spacing: 2px;
+            }
+            
+            .features-grid,
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .specs-content {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2rem;
+            }
+            
+            .audio-player {
+                padding: 1.5rem;
+            }
+            
+            .player-controls {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+            
+            .volume-control {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .playlist-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+            
+            .ab-toggle {
+                justify-content: center;
+            }
+            
+            /* Plugin container mobile adjustments */
+            .plugin-visual {
+                padding: 0;
+                margin-top: -20px;
+            }
+            
+            .interface-showcase {
+                padding: 0;
+                margin: 0;
+                background: transparent;
+                border: none;
+                border-radius: 0;
+            }
+            
+            .interface-preview {
+                min-height: auto;
+                height: auto;
+                max-height: none;
+                background: transparent;
+                margin: 0;
+                padding: 20px 0;
+                display: block;
+            }
+            
+            #pluginContainer {
+                min-height: auto;
+                height: auto;
+                width: 100%;
+                max-height: none;
+                overflow: visible;
+                background: transparent;
+                display: block;
+                position: relative;
+            }
+            
+            #quantumEQContainer {
+                width: 100% !important;
+                height: auto !important;
+                margin: 0 auto !important;
+                background: linear-gradient(135deg, #1a1a2e 0%, #0a0a0a 100%);
+                overflow: visible !important;
+                position: relative;
+                display: block;
+            }
+            
+            /* Plugin will be scaled via JavaScript */
+            #quantumEQContainer > div {
+                transform-origin: top left !important;
+                position: relative !important;
+            }
+            
+            /* Ensure touch events work */
+            #quantumEQContainer * {
+                touch-action: none;
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+                user-select: none;
+            }
+            
+            /* Hide extra elements */
+            .interface-glow {
+                display: none;
+            }
+            
+            /* Audio player mobile styles */
+            .audio-player-container {
+                max-width: 100%;
+                padding: 0 1rem;
+            }
+            
+            .audio-player {
+                padding: 1.5rem;
+            }
+            
+            .compact-controls {
+                gap: 1rem;
+                flex-wrap: wrap;
+                justify-content: space-between;
+            }
+            
+            .ab-toggle {
+                flex: 0 0 auto;
+            }
+            
+            .volume-mini {
+                flex: 0 0 auto;
+            }
+            
+            #volumeSlider {
+                width: 50px;
+            }
+            
+            /* Reduce spacing on mobile */
+            .plugin-visual h2 {
+                font-size: 1.5rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .plugin-visual .gradient-text {
+                font-size: 1.5rem;
+            }
+        }
+        
+        /* Tablet adjustments */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .interface-preview {
+                min-height: 500px;
+            }
+            
+            #pluginContainer {
+                min-height: 500px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="quantum-bg"></div>
+    <div class="quantum-animation"></div>
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+    
+    <nav id="navbar">
+        <div class="nav-container">
+            <a href="secretweapon-homepage.html" class="logo">
+                <img src="images/secret-weapon-dsp-logo.svg" alt="Secret Weapon DSP">
+            </a>
+            <div class="nav-links">
+                <a href="secretweapon-homepage.html">Home</a>
+                <a href="plugins-overview.html">Plugins</a>
+                <a href="support-page.html">Support</a>
+                <a href="contact-page.html">Contact</a>
+            </div>
+            <button class="hamburger" id="hamburger" aria-label="Toggle navigation menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+    
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <i class="fas fa-sparkles"></i>
+                Precision Audio Equalizer
+            </div>
+            <h1>QUANTUM EQ</h1>
+            <p class="hero-description">
+                Experience the future of equalization with our 10-band precision processor. 
+                Real-time FFT analysis, six filter types, and an interface so beautiful 
+                it makes mixing a visual experience.
+            </p>
+            <p style="font-size: 0.875rem; color: rgba(255,255,255,0.6); margin-top: 1rem;">
+                <i class="fas fa-check-circle" style="color: #38f9d7;"></i> No iLok Required
+            </p>
+            <div class="hero-actions">
+                <a href="#purchase" class="btn btn-primary">
+                    <i class="fas fa-shopping-cart"></i>
+                    Buy Now
+                </a>
+                <a href="#demo" class="btn btn-secondary" onclick="document.getElementById('demo').scrollIntoView({ behavior: 'smooth' }); return false;">
+                    <i class="fas fa-play"></i>
+                    Try Live Demo
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Audio Player Section -->
+    <section class="audio-demos" id="demo">
+        <div class="section-header">
+            <div class="section-badge">
+                <i class="fas fa-music"></i>
+                Step 1: Select Audio Source
+            </div>
+            <h2>Choose a <span class="gradient-text">Track</span></h2>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem;">Pick a drum or bass track to process through Quantum EQ</p>
+        </div>
+        
+        <div style="background: rgba(255, 67, 101, 0.1); border: 1px solid rgba(255, 67, 101, 0.3); border-radius: 8px; padding: 1rem 1.5rem; margin: 2rem auto; max-width: 800px; text-align: center;">
+            <p style="color: var(--text-primary); font-size: 0.875rem; margin: 0;">
+                <i class="fas fa-info-circle" style="margin-right: 0.5rem; color: #ff4365;"></i>
+                <strong>Note:</strong> This web demo provides a preview of Quantum EQ's capabilities. The standalone plugin delivers significantly better performance, lower latency, and higher audio quality than what's possible with web audio technology.
+            </p>
+        </div>
+        
+        <div class="audio-player-container">
+            <div class="audio-player">
+                <!-- Hidden now-playing section -->
+                <div class="now-playing" style="display: none;">
+                    <div class="track-info">
+                        <h3 id="track-title">Select a track</h3>
+                        <p id="track-artist">Choose from the playlist below</p>
+                    </div>
+                    <div class="waveform-container">
+                        <canvas id="waveform" width="800" height="60"></canvas>
+                        <div class="progress-bar">
+                            <div class="progress-fill"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Compact Single Track Display -->
+                <div class="track-carousel">
+                    <button class="carousel-btn prev" id="prevBtn">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    
+                    <div class="current-track">
+                        <div class="track-info-compact">
+                            <h4 id="track-title-compact">Kick In</h4>
+                            <p id="track-subtitle">Deep punch and resonance control</p>
+                        </div>
+                    </div>
+                    
+                    <button class="carousel-btn next" id="nextBtn">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                
+                <!-- Compact Controls -->
+                <div class="compact-controls">
+                    <button class="control-btn play-btn" id="playBtn">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    
+                    <div class="ab-toggle">
+                        <button class="ab-btn active" data-mode="processed">EQ On</button>
+                        <button class="ab-btn" data-mode="original">EQ Off</button>
+                    </div>
+                    
+                    <div class="volume-mini">
+                        <i class="fas fa-volume-up"></i>
+                        <input type="range" id="volumeSlider" min="0" max="100" value="70">
+                    </div>
+                </div>
+                
+                <!-- Track indicator dots -->
+                <div class="track-indicators">
+                    <span class="indicator active" data-track="0"></span>
+                    <span class="indicator" data-track="1"></span>
+                    <span class="indicator" data-track="2"></span>
+                    <span class="indicator" data-track="3"></span>
+                    <span class="indicator" data-track="4"></span>
+                    <span class="indicator" data-track="5"></span>
+                    <span class="indicator" data-track="6"></span>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Visual Connector -->
+    <div class="visual-connector">
+        <div class="connector-line"></div>
+        <div class="connector-arrow">
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </div>
+    
+    <section class="plugin-visual">
+        <div class="section-header" style="text-align: center; margin-bottom: 2rem;">
+            <div class="section-badge" style="display: inline-flex;">
+                <i class="fas fa-sliders-h"></i>
+                Step 2: Shape Your Sound
+            </div>
+            <h2 style="font-size: 2.5rem; margin-top: 1rem;">Adjust the <span class="gradient-text">EQ Settings</span></h2>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem;">Use the 10 bands below to sculpt your sound in real-time</p>
+        </div>
+        <div class="interface-showcase">
+            <div class="interface-glow"></div>
+            <div class="interface-preview" id="pluginContainer">
+                <div class="loading-overlay" id="loadingOverlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.8); display: flex; align-items: center; justify-content: center; flex-direction: column; z-index: 10;">
+                    <div class="loading-spinner" style="width: 50px; height: 50px; border: 3px solid rgba(255, 255, 255, 0.1); border-top-color: #667eea; border-radius: 50%; animation: pluginSpin 1s linear infinite;"></div>
+                    <div class="loading-text" style="margin-top: 20px; color: var(--text-secondary);">Loading Quantum EQ...</div>
+                </div>
+                <div id="quantumEQContainer" style="width: 100%; height: 100%; position: relative;"></div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="features">
+        <div class="section-header">
+            <div class="section-badge">
+                <i class="fas fa-cube"></i>
+                Premium Features
+            </div>
+            <h2>Precision Meets <span class="gradient-text">Beauty</span></h2>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-spectrum"></i>
+                </div>
+                <h3>10 Full-Featured Bands</h3>
+                <p>
+                    Each band offers complete control with frequency, gain, Q factor, 
+                    and filter type selection. Color-coded for instant visual recognition 
+                    and workflow efficiency.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-area"></i>
+                </div>
+                <h3>Real-time FFT Analysis</h3>
+                <p>
+                    High-resolution spectrum analyzer with adjustable zoom and amplitude 
+                    scaling. See exactly what you're doing with beautiful, smooth animations.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-filter"></i>
+                </div>
+                <h3>Six Filter Types</h3>
+                <p>
+                    Bell, High Pass, Low Pass, High Shelf, Low Shelf, and Notch filters. 
+                    Each optimized for transparent sound and minimal phase distortion.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-magic"></i>
+                </div>
+                <h3>Proportional Q</h3>
+                <p>
+                    Intelligent Q behavior that automatically adjusts bandwidth based on 
+                    gain amount. Narrower Q for cuts (up to 2x at -12dB), wider Q for 
+                    boosts (up to 0.5x at +24dB), maintaining musical results.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-wave-square"></i>
+                </div>
+                <h3>Asymmetric Curves</h3>
+                <p>
+                    Enable asymmetric bell curves with adjustable asymmetry amount (1.0-2.0x) 
+                    for more natural tone shaping. Wider curves for boosts, narrower for cuts - 
+                    perfect for surgical corrections or creative sound design.
+                </p>
+            </div>
+            
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-tachometer-alt"></i>
+                </div>
+                <h3>Premium Interface</h3>
+                <p>
+                    Stunning visual design with smooth animations, intuitive controls, 
+                    and a workflow that makes precision work feel effortless.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-microchip"></i>
+                </div>
+                <h3>Matched-Z Transform</h3>
+                <p>
+                    Superior high-frequency response using Matched-Z Transform filter 
+                    design. Accurate frequency response up to Nyquist with minimal 
+                    cramping, perfect for mastering applications.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+                <h3>Cascaded Architecture</h3>
+                <p>
+                    High-order filters (up to 48dB/oct) using cascaded biquad sections 
+                    with Butterworth response. Each stage carefully optimized for 
+                    stability and transparent sound.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>120 FPS FFT Display</h3>
+                <p>
+                    Ultra-smooth spectrum analyzer running at 120 updates per second 
+                    with 4096-point FFT. Logarithmic frequency mapping provides 
+                    detailed view from 20Hz to 20kHz.
+                </p>
+            </div>
+        </div>
+    </section>
+    
+    
+    <section class="filter-types">
+        <div class="section-header">
+            <div class="section-badge">
+                <i class="fas fa-sliders-h"></i>
+                Filter Types
+            </div>
+            <h2>Six Ways to <span class="gradient-text">Shape Your Sound</span></h2>
+        </div>
+        
+        <div class="filter-grid">
+            <div class="filter-type">
+                <img src="images/filter-shapes/bell-filter.svg" alt="Bell Filter" class="filter-shape-img">
+                <div class="filter-name">Bell</div>
+                <div class="filter-description">Boost or cut specific frequencies</div>
+            </div>
+            <div class="filter-type">
+                <img src="images/filter-shapes/high-pass-filter.svg" alt="High Pass Filter" class="filter-shape-img">
+                <div class="filter-name">High Pass</div>
+                <div class="filter-description">Remove low frequencies</div>
+            </div>
+            <div class="filter-type">
+                <img src="images/filter-shapes/low-pass-filter.svg" alt="Low Pass Filter" class="filter-shape-img">
+                <div class="filter-name">Low Pass</div>
+                <div class="filter-description">Remove high frequencies</div>
+            </div>
+            <div class="filter-type">
+                <img src="images/filter-shapes/high-shelf-filter.svg" alt="High Shelf Filter" class="filter-shape-img">
+                <div class="filter-name">High Shelf</div>
+                <div class="filter-description">Adjust all highs</div>
+            </div>
+            <div class="filter-type">
+                <img src="images/filter-shapes/low-shelf-filter.svg" alt="Low Shelf Filter" class="filter-shape-img">
+                <div class="filter-name">Low Shelf</div>
+                <div class="filter-description">Adjust all lows</div>
+            </div>
+            <div class="filter-type">
+                <img src="images/filter-shapes/notch-filter.svg" alt="Notch Filter" class="filter-shape-img">
+                <div class="filter-name">Notch</div>
+                <div class="filter-description">Surgical removal</div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="purchase" id="purchase">
+        <div class="purchase-content">
+            <div class="section-badge">
+                <i class="fas fa-crown"></i>
+                Get Quantum EQ
+            </div>
+            <h2>Elevate Your <span class="gradient-text">Mix</span></h2>
+            <div style="text-align: center; margin: 2rem 0;">
+                <div style="font-size: 4rem; font-weight: 700; color: #888; text-decoration: line-through; margin-bottom: -2.5rem;">$50</div>
+                <div class="price">$35</div>
+            </div>
+            <p style="color: #ff4365; font-weight: 600; text-align: center; margin-bottom: 2rem;">Limited Time Sale!</p>
+            <div class="hero-actions" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 280px)); gap: 2rem; justify-content: center; margin-top: 2rem; align-items: end;">
+                <div id='quantum-eq-buy-button'></div>
+                <div id='quantum-eq-demo-button'></div>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="footer-content">
+            <div class="social-links">
+                <a href="https://www.facebook.com/secretweapondsp" target="_blank" rel="noopener"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.instagram.com/secretweapondsp/" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.youtube.com/@secretweapondsp" target="_blank" rel="noopener"><i class="fab fa-youtube"></i></a>
+                <a href="https://www.tiktok.com/@secretweapondsp" target="_blank" rel="noopener"><i class="fab fa-tiktok"></i></a>
+            </div>
+            <p>&copy; 2025 Secret Weapon DSP. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script>
+        console.log('Page scripts starting...');
+        
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+        
+        // Hamburger menu functionality
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.querySelector('.nav-links');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+        const body = document.body;
+        
+        function toggleMobileMenu() {
+            hamburger.classList.toggle('active');
+            navLinks.classList.toggle('mobile-active');
+            mobileOverlay.classList.toggle('active');
+            body.style.overflow = body.style.overflow === 'hidden' ? '' : 'hidden';
+        }
+        
+        hamburger.addEventListener('click', toggleMobileMenu);
+        
+        mobileOverlay.addEventListener('click', () => {
+            if (navLinks.classList.contains('mobile-active')) {
+                toggleMobileMenu();
+            }
+        });
+        
+        // Close menu when clicking on a link
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (navLinks.classList.contains('mobile-active')) {
+                    toggleMobileMenu();
+                }
+            });
+        });
+        
+        // Band color hover effects
+        const bandColors = document.querySelectorAll('.band-color');
+        bandColors.forEach(band => {
+            band.addEventListener('mouseenter', (e) => {
+                const bandNum = e.target.getAttribute('data-band');
+                e.target.style.boxShadow = `0 10px 40px ${getComputedStyle(e.target).background}`;
+            });
+        });
+        
+        // WASM Plugin Loading directly
+        let pluginLoaded = false;
+        let loadingStarted = false;
+        let audioContext = null;
+        let patchConnection = null;
+        
+        async function loadQuantumEQ() {
+            if (pluginLoaded || loadingStarted) return;
+            loadingStarted = true;
+            
+            console.log('Loading Quantum EQ plugin...');
+            const container = document.getElementById('quantumEQContainer');
+            const overlay = document.getElementById('loadingOverlay');
+            const loadingText = overlay.querySelector('.loading-text');
+            
+            try {
+                // Create or get shared audio context
+                if (!window.globalAudioContext) {
+                    window.globalAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    console.log('Plugin created global audio context');
+                }
+                audioContext = window.globalAudioContext;
+                
+                // Import the Quantum EQ module
+                const module = await import('./WASM/Quantum EQ 1.0/cmaj_Quantum_EQ.js');
+                const createPatchView = (await import('./WASM/Quantum EQ 1.0/cmaj_api/cmaj-patch-view.js')).createPatchView;
+                
+                // Create the patch connection
+                patchConnection = await module.createAudioWorkletNodePatchConnection(audioContext, 'quantum-eq-processor');
+                
+                // Wait a bit for the worklet to fully initialize
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+                // Log the patchConnection to debug
+                console.log('Patch connection created:', patchConnection);
+                console.log('Available properties:', Object.keys(patchConnection));
+                
+                // The audio node should be accessible directly as audioNode
+                let audioNode = patchConnection.audioNode;
+                
+                if (!audioNode) {
+                    console.error('No audio node found in patch connection');
+                    console.log('Patch connection structure:', patchConnection);
+                    
+                    // Try to find it in other ways
+                    if (patchConnection.getAudioNode && typeof patchConnection.getAudioNode === 'function') {
+                        audioNode = patchConnection.getAudioNode();
+                    }
+                } else {
+                    console.log('Audio node found:', audioNode);
+                    console.log('Audio node type:', audioNode.constructor.name);
+                    console.log('Audio node context:', audioNode.context);
+                    console.log('Number of inputs:', audioNode.numberOfInputs);
+                    console.log('Number of outputs:', audioNode.numberOfOutputs);
+                }
+                
+                // Create custom view
+                const customView = await createPatchView(patchConnection, 'custom');
+                
+                if (customView) {
+                    container.innerHTML = '';
+                    
+                    // Don't constrain the custom view size - let it be its natural size
+                    customView.style.margin = '0 auto';
+                    customView.style.position = 'relative';
+                    
+                    container.appendChild(customView);
+                    
+                    // Apply mobile scaling - simple proportional scale
+                    function applyMobileScaling() {
+                        const pluginWidth = 1200;  // Fixed plugin width for Quantum EQ
+                        const pluginHeight = 600; // Fixed plugin height for Quantum EQ
+                        const viewportWidth = window.innerWidth;
+                        
+                        // Remove any existing mobile notices first
+                        const existingNotice = document.querySelector('.mobile-eq-notice');
+                        if (existingNotice) {
+                            existingNotice.remove();
+                        }
+                        
+                        if (viewportWidth <= 768) {
+                            // Add mobile notice
+                            const mobileNotice = document.createElement('div');
+                            mobileNotice.style.cssText = `
+                                background: rgba(102, 126, 234, 0.1);
+                                border: 1px solid rgba(102, 126, 234, 0.3);
+                                border-radius: 8px;
+                                padding: 1rem;
+                                margin-bottom: 1rem;
+                                text-align: center;
+                                font-size: 0.875rem;
+                                color: rgba(255, 255, 255, 0.8);
+                            `;
+                            mobileNotice.innerHTML = `
+                                <i class="fas fa-info-circle" style="margin-right: 0.5rem; color: #667eea;"></i>
+                                Use two fingers to pan if controls are off-screen. Tap and drag to adjust EQ bands.
+                            `;
+                            mobileNotice.className = 'mobile-eq-notice';
+                            container.parentElement.insertBefore(mobileNotice, container);
+                            
+                            // For mobile, scale to fit viewport width with padding
+                            const padding = 40; // More padding for mobile
+                            const availableWidth = viewportWidth - padding;
+                            
+                            // Calculate scale based on width
+                            let scale = availableWidth / pluginWidth;
+                            
+                            // Different minimum scales based on device
+                            const isSmallPhone = viewportWidth < 375;
+                            const minScale = isSmallPhone ? 0.3 : 0.4;
+                            scale = Math.max(minScale, scale);
+                            
+                            // Apply the scale transform to the plugin itself
+                            customView.style.transform = `scale(${scale})`;
+                            customView.style.transformOrigin = 'top left';
+                            customView.style.width = `${pluginWidth}px`;
+                            customView.style.height = `${pluginHeight}px`;
+                            
+                            // Set container dimensions to match scaled content
+                            const scaledHeight = pluginHeight * scale;
+                            const scaledWidth = pluginWidth * scale;
+                            
+                            // Set the quantumEQContainer dimensions
+                            const eqContainer = document.getElementById('quantumEQContainer');
+                            eqContainer.style.height = `${scaledHeight}px`;
+                            eqContainer.style.width = `${scaledWidth}px`;
+                            eqContainer.style.margin = '0 auto';
+                            eqContainer.style.position = 'relative';
+                            
+                            // Enable horizontal scrolling if needed
+                            const interfaceShowcase = container.parentElement;
+                            if (scale < 0.5) {
+                                interfaceShowcase.style.overflowX = 'auto';
+                                interfaceShowcase.style.webkitOverflowScrolling = 'touch';
+                                interfaceShowcase.style.scrollbarWidth = 'thin';
+                                
+                                // Add scroll hint
+                                const scrollHint = document.createElement('div');
+                                scrollHint.style.cssText = `
+                                    text-align: center;
+                                    font-size: 0.75rem;
+                                    color: rgba(255, 255, 255, 0.5);
+                                    margin-top: 0.5rem;
+                                `;
+                                scrollHint.innerHTML = '<i class="fas fa-arrows-alt-h"></i> Swipe horizontally to see all controls';
+                                scrollHint.className = 'scroll-hint';
+                                
+                                if (!document.querySelector('.scroll-hint')) {
+                                    eqContainer.parentElement.appendChild(scrollHint);
+                                }
+                            } else {
+                                interfaceShowcase.style.overflowX = 'hidden';
+                                const scrollHint = document.querySelector('.scroll-hint');
+                                if (scrollHint) scrollHint.remove();
+                            }
+                            
+                            // Update touch event coordinates
+                            if (window.updateTouchScale) {
+                                window.updateTouchScale(scale);
+                            }
+                            
+                            console.log('Mobile scaling:', {
+                                viewport: viewportWidth,
+                                originalSize: `${pluginWidth}x${pluginHeight}`,
+                                scale: scale.toFixed(3),
+                                scaledSize: `${Math.round(scaledWidth)}x${Math.round(scaledHeight)}`
+                            });
+                        } else if (viewportWidth <= 1024) {
+                            // Tablet scaling
+                            const scale = 0.75;
+                            customView.style.transform = `scale(${scale})`;
+                            customView.style.transformOrigin = 'top left';
+                            customView.style.width = `${pluginWidth}px`;
+                            customView.style.height = `${pluginHeight}px`;
+                            
+                            const scaledHeight = pluginHeight * scale;
+                            const scaledWidth = pluginWidth * scale;
+                            
+                            const eqContainer = document.getElementById('quantumEQContainer');
+                            eqContainer.style.height = `${scaledHeight}px`;
+                            eqContainer.style.width = `${scaledWidth}px`;
+                            eqContainer.style.margin = '0 auto';
+                            
+                            if (window.updateTouchScale) {
+                                window.updateTouchScale(scale);
+                            }
+                        } else {
+                            // Reset for desktop
+                            customView.style.transform = 'scale(1)';
+                            customView.style.transformOrigin = 'top left';
+                            customView.style.width = '';
+                            customView.style.height = '';
+                            
+                            const eqContainer = document.getElementById('quantumEQContainer');
+                            eqContainer.style.height = '';
+                            eqContainer.style.width = '';
+                            eqContainer.style.margin = '';
+                            
+                            container.parentElement.style.overflowX = 'hidden';
+                            const scrollHint = document.querySelector('.scroll-hint');
+                            if (scrollHint) scrollHint.remove();
+                            
+                            if (window.updateTouchScale) {
+                                window.updateTouchScale(1);
+                            }
+                        }
+                    }
+                    
+                    // Apply initial scaling after a short delay to ensure dimensions are correct
+                    setTimeout(() => {
+                        applyMobileScaling();
+                    }, 100);
+                    
+                    // Reapply on resize
+                    window.addEventListener('resize', () => {
+                        setTimeout(applyMobileScaling, 50);
+                    });
+                    
+                    // Store the patchConnection globally for audio routing
+                    window.patchConnection = patchConnection;
+                    window.quantumEQNode = audioNode;
+                    
+                    // If audio is already playing, reconnect it through the EQ
+                    if (window.audioPlayer && window.audioPlayer.isPlaying && window.audioPlayer.needsPluginConnection) {
+                        console.log('Reconnecting audio through EQ...');
+                        window.audioPlayer.reconnectThroughPlugin();
+                    }
+                    
+                    setTimeout(() => {
+                        overlay.style.display = 'none';
+                        pluginLoaded = true;
+                        
+                    }, 300);
+                } else {
+                    throw new Error('Failed to create custom view');
+                }
+            } catch (error) {
+                console.error('Error loading Quantum EQ:', error);
+                loadingText.innerHTML = '<span style="color: #ff4365;">Error loading plugin. Refresh to retry.</span>';
+                loadingStarted = false;
+            }
+        }
+        
+        // Auto-load when plugin section is visible
+        const observePlugin = () => {
+            const pluginSection = document.querySelector('.plugin-visual');
+            if (!pluginSection) return;
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !pluginLoaded) {
+                        loadQuantumEQ();
+                        observer.disconnect();
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            observer.observe(pluginSection);
+        };
+        
+        // Set up auto-loading
+        window.addEventListener('load', () => {
+            // Always load the plugin immediately for audio routing
+            setTimeout(loadQuantumEQ, 100);
+            
+            // Handle "Try Demo" button - scrolls to audio player now
+            const demoButton = document.querySelector('a[href="#demo"]');
+            if (demoButton) {
+                demoButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    document.getElementById('demo').scrollIntoView({ behavior: 'smooth' });
+                });
+            }
+        });
+        
+        // Audio Player Functionality
+        class AudioPlayer {
+            constructor() {
+                this.audioContext = null;
+                this.sourceNode = null;
+                this.gainNode = null;
+                this.currentTrackIndex = -1;
+                this.isPlaying = false;
+                this.mode = 'processed'; // 'processed' or 'original'
+                this.audioBuffer = null;
+                this.startTime = 0;
+                this.pauseTime = 0;
+                this.pluginNode = null;
+                
+                // Define tracks using the same audio files from the example
+                this.tracks = [
+                    {
+                        title: 'Kick In',
+                        artist: 'Deep punch and resonance control',
+                        duration: '0:00',
+                        processed: './Audio_Files/Kick_In.wav',
+                        original: './Audio_Files/Kick_In.wav'
+                    },
+                    {
+                        title: 'Kick (Sub)',
+                        artist: 'Sub-frequency precision shaping',
+                        duration: '0:00',
+                        processed: './Audio_Files/Kick_(Sub).wav',
+                        original: './Audio_Files/Kick_(Sub).wav'
+                    },
+                    {
+                        title: 'Snare',
+                        artist: 'Crisp attack and body enhancement',
+                        duration: '0:00',
+                        processed: './Audio_Files/Snare.wav',
+                        original: './Audio_Files/Snare.wav'
+                    },
+                    {
+                        title: 'Tom',
+                        artist: 'Resonance control and warmth',
+                        duration: '0:00',
+                        processed: './Audio_Files/Tom.wav',
+                        original: './Audio_Files/Tom.wav'
+                    },
+                    {
+                        title: 'Overheads',
+                        artist: 'Clarity and spatial enhancement',
+                        duration: '0:00',
+                        processed: './Audio_Files/Overheads.wav',
+                        original: './Audio_Files/Overheads.wav'
+                    },
+                    {
+                        title: 'Room',
+                        artist: 'Natural ambience control',
+                        duration: '0:00',
+                        processed: './Audio_Files/Room.wav',
+                        original: './Audio_Files/Room.wav'
+                    },
+                    {
+                        title: 'Bass Line',
+                        artist: 'Tight low-end and harmonic richness',
+                        duration: '0:00',
+                        processed: './Audio_Files/Bass_Line.wav',
+                        original: './Audio_Files/Bass_Line.wav'
+                    }
+                ];
+                
+                this.initializeElements();
+                this.bindEvents();
+                this.initializeWaveform();
+                
+                // Make player globally accessible
+                window.audioPlayer = this;
+            }
+            
+            async initAudioContext() {
+                if (!this.audioContext) {
+                    // Use the global audio context if it exists (from plugin)
+                    if (window.globalAudioContext) {
+                        this.audioContext = window.globalAudioContext;
+                        console.log('Using existing audio context from plugin');
+                    } else {
+                        this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        window.globalAudioContext = this.audioContext;
+                        console.log('Created new audio context');
+                    }
+                    this.gainNode = this.audioContext.createGain();
+                }
+            }
+            
+            
+            initializeElements() {
+                this.playBtn = document.getElementById('playBtn');
+                this.prevBtn = document.getElementById('prevBtn');
+                this.nextBtn = document.getElementById('nextBtn');
+                this.volumeSlider = document.getElementById('volumeSlider');
+                this.trackTitle = document.getElementById('track-title-compact');
+                this.trackSubtitle = document.getElementById('track-subtitle');
+                this.trackIndicators = document.querySelectorAll('.indicator');
+                this.abButtons = document.querySelectorAll('.ab-btn');
+                
+                // Add click handlers for indicators
+                this.trackIndicators.forEach((indicator, index) => {
+                    indicator.addEventListener('click', () => this.loadTrack(index));
+                });
+            }
+            
+            bindEvents() {
+                // Player controls
+                this.playBtn.addEventListener('click', () => this.togglePlay());
+                this.prevBtn.addEventListener('click', () => this.playPrevious());
+                this.nextBtn.addEventListener('click', () => this.playNext());
+                
+                // Volume control
+                this.volumeSlider.addEventListener('input', (e) => {
+                    if (this.gainNode) {
+                        this.gainNode.gain.cancelScheduledValues(this.audioContext.currentTime);
+                        this.gainNode.gain.value = e.target.value / 100;
+                    }
+                });
+                
+                // Remove old track selection code since we're using carousel
+                
+                // A/B toggle
+                this.abButtons.forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        this.abButtons.forEach(b => b.classList.remove('active'));
+                        e.target.classList.add('active');
+                        this.mode = e.target.dataset.mode;
+                        
+                        // For now, just update the UI - both modes use the same audio files
+                        // In the future, you can load different files for processed vs original
+                        console.log('Mode switched to:', this.mode);
+                    });
+                });
+                
+            }
+            
+            initializeWaveform() {
+                // Removed - no longer needed for compact player
+            }
+            
+            async loadTrack(index, autoPlay = true) {
+                await this.initAudioContext();
+                
+                this.currentTrackIndex = index;
+                const track = this.tracks[index];
+                
+                // Update UI
+                this.trackTitle.textContent = track.title;
+                this.trackSubtitle.textContent = track.artist;
+                
+                // Update indicators
+                this.trackIndicators.forEach((indicator, i) => {
+                    indicator.classList.toggle('active', i === index);
+                });
+                
+                // Stop current playback
+                if (this.sourceNode) {
+                    this.stop();
+                }
+                
+                // Load audio
+                try {
+                    const response = await fetch(track[this.mode]);
+                    const arrayBuffer = await response.arrayBuffer();
+                    this.audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
+                    
+                    if (autoPlay) {
+                        this.play();
+                    }
+                } catch (error) {
+                    console.error('Error loading track:', error);
+                }
+            }
+            
+            play() {
+                if (!this.audioBuffer || !this.audioContext) return;
+                
+                // Create new source node
+                this.sourceNode = this.audioContext.createBufferSource();
+                this.sourceNode.buffer = this.audioBuffer;
+                this.sourceNode.loop = true;
+                
+                // Check for EQ node every time we play
+                if (window.quantumEQNode) {
+                    try {
+                        // Route through EQ: source → EQ → gain → destination
+                        this.sourceNode.connect(window.quantumEQNode);
+                        
+                        // Disconnect gain from destination first
+                        try { this.gainNode.disconnect(); } catch (e) {}
+                        
+                        // Connect EQ to gain, then gain to destination
+                        window.quantumEQNode.connect(this.gainNode);
+                        this.gainNode.connect(this.audioContext.destination);
+                        
+                        console.log('Audio routed through Quantum EQ');
+                    } catch (error) {
+                        console.error('Error connecting to EQ:', error);
+                        // Fallback to direct connection
+                        this.sourceNode.connect(this.gainNode);
+                        this.gainNode.connect(this.audioContext.destination);
+                    }
+                } else {
+                    // Direct route: source → gain → destination
+                    this.sourceNode.connect(this.gainNode);
+                    this.gainNode.connect(this.audioContext.destination);
+                    console.log('Audio routed direct (no EQ) - plugin not loaded yet');
+                    
+                    // Set a flag to reconnect when plugin loads
+                    this.needsPluginConnection = true;
+                }
+                
+                // Start playback
+                const offset = this.pauseTime % this.audioBuffer.duration;
+                this.sourceNode.start(0, offset);
+                this.startTime = this.audioContext.currentTime - offset;
+                
+                this.isPlaying = true;
+                this.playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            }
+            
+            stop() {
+                if (!this.isPlaying) return;
+                
+                // Store pause position
+                this.pauseTime = (this.audioContext.currentTime - this.startTime) % this.audioBuffer.duration;
+                
+                // Feed silence to the plugin before stopping
+                if (this.sourceNode && window.quantumEQNode) {
+                    try {
+                        // Create a silent buffer
+                        const silentBuffer = this.audioContext.createBuffer(
+                            2, // stereo
+                            this.audioContext.sampleRate * 0.1, // 100ms of silence
+                            this.audioContext.sampleRate
+                        );
+                        
+                        // Create a new source with silence
+                        const silentSource = this.audioContext.createBufferSource();
+                        silentSource.buffer = silentBuffer;
+                        
+                        // Disconnect the current source and connect the silent one
+                        this.sourceNode.disconnect();
+                        silentSource.connect(window.quantumEQNode);
+                        silentSource.start(0);
+                        
+                        // Stop the original source
+                        this.sourceNode.stop(0);
+                        this.sourceNode = null;
+                        
+                        // After a brief moment, stop everything
+                        setTimeout(() => {
+                            try {
+                                silentSource.stop(0);
+                                silentSource.disconnect();
+                            } catch (e) {}
+                            
+                            // Now disconnect the plugin
+                            if (window.quantumEQNode) {
+                                window.quantumEQNode.disconnect();
+                                window.quantumEQNode.connect(this.gainNode);
+                            }
+                        }, 100);
+                    } catch (e) {
+                        console.error('Error feeding silence:', e);
+                    }
+                } else if (this.sourceNode) {
+                    // No plugin, just stop normally
+                    try {
+                        this.sourceNode.stop(0);
+                        this.sourceNode.disconnect();
+                    } catch (e) {}
+                    this.sourceNode = null;
+                }
+                
+                // Mute output
+                this.gainNode.gain.cancelScheduledValues(this.audioContext.currentTime);
+                this.gainNode.gain.value = 0;
+                
+                // Restore gain after a moment
+                setTimeout(() => {
+                    this.gainNode.gain.value = this.volumeSlider.value / 100;
+                }, 150);
+                
+                this.isPlaying = false;
+                this.playBtn.innerHTML = '<i class="fas fa-play"></i>';
+            }
+            
+            pause() {
+                this.stop();
+            }
+            
+            reconnectThroughPlugin() {
+                if (!this.isPlaying || !window.quantumEQNode) return;
+                
+                console.log('Reconnecting audio through plugin...');
+                
+                // Store current playback position
+                const currentTime = this.audioContext.currentTime - this.startTime;
+                
+                // Stop current playback
+                this.stop();
+                
+                // Restart with plugin connection
+                this.pauseTime = currentTime;
+                this.play();
+            }
+            
+            togglePlay() {
+                if (this.currentTrackIndex === -1) {
+                    this.loadTrack(0);
+                } else if (this.isPlaying) {
+                    this.pause();
+                } else {
+                    this.play();
+                }
+            }
+            
+            playPrevious() {
+                if (this.currentTrackIndex > 0) {
+                    this.loadTrack(this.currentTrackIndex - 1);
+                } else {
+                    this.loadTrack(this.tracks.length - 1);
+                }
+            }
+            
+            playNext() {
+                if (this.currentTrackIndex < this.tracks.length - 1) {
+                    this.loadTrack(this.currentTrackIndex + 1);
+                } else {
+                    this.loadTrack(0);
+                }
+            }
+            
+            
+            formatTime(seconds) {
+                const mins = Math.floor(seconds / 60);
+                const secs = Math.floor(seconds % 60);
+                return `${mins}:${secs.toString().padStart(2, '0')}`;
+            }
+        }
+        
+        // Initialize audio player when page loads
+        window.addEventListener('DOMContentLoaded', () => {
+            new AudioPlayer();
+        });
+    </script>
+
+    <!-- Shopify Buy Button -->
+    <script type="text/javascript">
+    /*<![CDATA[*/
+    (function () {
+      var scriptURL = 'https://sdks.shopifycdn.com/buy-button/latest/buy-button-storefront.min.js';
+      if (window.ShopifyBuy) {
+        if (window.ShopifyBuy.UI) {
+          ShopifyBuyInit();
+        } else {
+          loadScript();
+        }
+      } else {
+        loadScript();
+      }
+      function loadScript() {
+        var script = document.createElement('script');
+        script.async = true;
+        script.src = scriptURL;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(script);
+        script.onload = ShopifyBuyInit;
+      }
+      function ShopifyBuyInit() {
+        var client = ShopifyBuy.buildClient({
+          domain: 'vckhed-ia.myshopify.com',
+          storefrontAccessToken: 'df7325f00afa869a92034415d3428d8e',
+        });
+        ShopifyBuy.UI.onReady(client).then(function (ui) {
+          ui.createComponent('product', {
+            id: '7859012927627',
+            node: document.getElementById('quantum-eq-buy-button'),
+            moneyFormat: '%24%7B%7Bamount%7D%7D',
+            options: {
+              "product": {
+                "styles": {
+                  "product": {
+                    "@media (min-width: 601px)": {
+                      "max-width": "280px",
+                      "margin-left": "0",
+                      "margin-bottom": "0"
+                    }
+                  },
+                  "button": {
+                    "font-family": "Inter, sans-serif",
+                    "font-weight": "600",
+                    "font-size": "16px",
+                    ":hover": {
+                      "background-color": "#5847c7",
+                      "background": "#5847c7"
+                    },
+                    "background-color": "#667eea",
+                    ":focus": {
+                      "background-color": "#5847c7"
+                    },
+                    "border-radius": "12px",
+                    "padding": "16px 32px",
+                    "background": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                    "color": "#ffffff",
+                    "width": "100%"
+                  },
+                  "price": {
+                    "font-family": "Inter, sans-serif",
+                    "font-size": "20px",
+                    "color": "#ffffff",
+                    "text-align": "center"
+                  },
+                  "compareAt": {
+                    "font-family": "Inter, sans-serif",
+                    "font-size": "16px",
+                    "color": "#999999",
+                    "text-align": "center"
+                  },
+                  "title": {
+                    "font-family": "Space Grotesk, sans-serif",
+                    "font-weight": "600",
+                    "font-size": "20px",
+                    "color": "#ffffff",
+                    "text-align": "center"
+                  }
+                },
+                "buttonDestination": "checkout",
+                "contents": {
+                  "img": false,
+                  "imgWithCarousel": false,
+                  "title": false,
+                  "price": false,
+                  "options": false
+                },
+                "text": {
+                  "button": "Purchase Now"
+                }
+              },
+              "productSet": {
+                "styles": {
+                  "products": {
+                    "@media (min-width: 601px)": {
+                      "margin-left": "-20px"
+                    }
+                  }
+                }
+              },
+              "modalProduct": {
+                "contents": {
+                  "img": false,
+                  "imgWithCarousel": true,
+                  "button": false,
+                  "buttonWithQuantity": true
+                },
+                "styles": {
+                  "product": {
+                    "@media (min-width: 601px)": {
+                      "max-width": "100%",
+                      "margin-left": "0px",
+                      "margin-bottom": "0px"
+                    }
+                  },
+                  "button": {
+                    "font-family": "Inter, sans-serif",
+                    "font-weight": "600",
+                    ":hover": {
+                      "background-color": "#5847c7"
+                    },
+                    "background-color": "#667eea",
+                    ":focus": {
+                      "background-color": "#5847c7"
+                    }
+                  }
+                },
+                "text": {
+                  "button": "Add to cart"
+                }
+              },
+              "option": {},
+              "cart": {
+                "styles": {
+                  "button": {
+                    "font-family": "Inter, sans-serif",
+                    "font-weight": "600",
+                    ":hover": {
+                      "background-color": "#5847c7"
+                    },
+                    "background-color": "#667eea",
+                    ":focus": {
+                      "background-color": "#5847c7"
+                    }
+                  }
+                },
+                "text": {
+                  "total": "Subtotal",
+                  "button": "Checkout"
+                }
+              },
+              "toggle": {
+                "styles": {
+                  "toggle": {
+                    "font-family": "Inter, sans-serif",
+                    "background-color": "#667eea",
+                    ":hover": {
+                      "background-color": "#5847c7"
+                    },
+                    ":focus": {
+                      "background-color": "#5847c7"
+                    }
+                  }
+                }
+              }
+            },
+          });
+        });
+      }
+    })();
+    /*]]>*/
+    </script>
+    
+    <!-- Quantum EQ Demo Button -->
+    <script type="text/javascript">
+    /*<![CDATA[*/
+    (function () {
+      var scriptURL = 'https://sdks.shopifycdn.com/buy-button/latest/buy-button-storefront.min.js';
+      if (window.ShopifyBuy) {
+        if (window.ShopifyBuy.UI) {
+          ShopifyBuyInitDemo();
+        } else {
+          loadScriptDemo();
+        }
+      } else {
+        loadScriptDemo();
+      }
+      function loadScriptDemo() {
+        var script = document.createElement('script');
+        script.async = true;
+        script.src = scriptURL;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(script);
+        script.onload = ShopifyBuyInitDemo;
+      }
+      function ShopifyBuyInitDemo() {
+        var client = ShopifyBuy.buildClient({
+          domain: 'vckhed-ia.myshopify.com',
+          storefrontAccessToken: 'df7325f00afa869a92034415d3428d8e',
+        });
+        ShopifyBuy.UI.onReady(client).then(function (ui) {
+          ui.createComponent('product', {
+            id: '7860527661195',
+            node: document.getElementById('quantum-eq-demo-button'),
+            moneyFormat: '%24%7B%7Bamount%7D%7D',
+            options: {
+              "product": {
+                "styles": {
+                  "product": {
+                    "@media (min-width: 601px)": {
+                      "max-width": "280px",
+                      "margin-left": "0",
+                      "margin-bottom": "0"
+                    }
+                  },
+                  "button": {
+                    "font-family": "Inter, sans-serif",
+                    "font-weight": "600",
+                    "font-size": "16px",
+                    "padding-left": "32px",
+                    "padding-right": "32px",
+                    "color": "#ffffff",
+                    "background": "linear-gradient(135deg, #764ba2 0%, #f093fb 100%)",
+                    "border-radius": "12px",
+                    "height": "50px",
+                    ":hover": {
+                      "background": "linear-gradient(135deg, #643a8a 0%, #e083eb 100%)"
+                    },
+                    ":focus": {
+                      "background": "linear-gradient(135deg, #643a8a 0%, #e083eb 100%)"
+                    }
+                  },
+                  "price": {
+                    "display": "none"
+                  },
+                  "compareAt": {
+                    "display": "none"
+                  },
+                  "unitPrice": {
+                    "display": "none"
+                  },
+                  "description": {
+                    "display": "none"
+                  },
+                  "title": {
+                    "display": "none"
+                  }
+                },
+                "buttonDestination": "checkout",
+                "contents": {
+                  "img": false,
+                  "imgWithCarousel": false,
+                  "title": false,
+                  "price": false,
+                  "options": false
+                },
+                "text": {
+                  "button": "Download Trial"
+                }
+              },
+              "productSet": {
+                "styles": {
+                  "products": {
+                    "@media (min-width: 601px)": {
+                      "margin-left": "-20px"
+                    }
+                  }
+                }
+              },
+              "modalProduct": {
+                "contents": {
+                  "img": false,
+                  "imgWithCarousel": true,
+                  "button": false,
+                  "buttonWithQuantity": true
+                },
+                "styles": {
+                  "product": {
+                    "@media (min-width: 601px)": {
+                      "max-width": "100%",
+                      "margin-left": "0px",
+                      "margin-bottom": "0px"
+                    }
+                  },
+                  "button": {
+                    "font-family": "Inter, sans-serif",
+                    "font-weight": "600",
+                    "font-size": "16px",
+                    "padding-left": "32px",
+                    "padding-right": "32px",
+                    ":hover": {
+                      "background-color": "#29712d"
+                    },
+                    "background-color": "#2e7d32",
+                    ":focus": {
+                      "background-color": "#29712d"
+                    }
+                  }
+                },
+                "text": {
+                  "button": "Add to cart"
+                }
+              },
+              "option": {},
+              "cart": {
+                "styles": {
+                  "button": {
+                    ":hover": {
+                      "background-color": "#29712d"
+                    },
+                    "background-color": "#2e7d32",
+                    ":focus": {
+                      "background-color": "#29712d"
+                    }
+                  }
+                },
+                "text": {
+                  "total": "Subtotal",
+                  "button": "Checkout"
+                }
+              },
+              "toggle": {
+                "styles": {
+                  "toggle": {
+                    "background-color": "#2e7d32",
+                    ":hover": {
+                      "background-color": "#29712d"
+                    },
+                    ":focus": {
+                      "background-color": "#29712d"
+                    }
+                  }
+                }
+              }
+            },
+          });
+        });
+      }
+    })();
+    /*]]>*/
+    </script>
+</body>
+</html>

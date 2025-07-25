@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep:*)",
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(mkdir:*)",
+      "Bash(cp:*)",
+      "Bash(powershell.exe:*)",
+      "Bash(cmd.exe /c \"dir /s *.vst3 *.exe 2>nul | findstr /i \"\"canvascompressor\"\"\")",
+      "Bash(cmake:*)",
+      "Bash(cmd.exe /c \"cmake --build . --config Release\")",
+      "Bash(python:*)",
+      "WebFetch(domain:www.pluginboutique.com)"
+    ],
+    "deny": []
+  }
+}

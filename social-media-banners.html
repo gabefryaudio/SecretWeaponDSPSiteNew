@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secret Weapon DSP - Social Media Banners</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0f;
+            color: white;
+            padding: 2rem;
+        }
+        
+        .banner-container {
+            margin-bottom: 4rem;
+        }
+        
+        .banner-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #999;
+        }
+        
+        .banner {
+            position: relative;
+            overflow: hidden;
+            background: #0a0a0f;
+            display: flex;
+            align-items: stretch;
+        }
+        
+        /* Facebook Banner - 820 x 312 px */
+        .facebook-banner {
+            width: 820px;
+            height: 312px;
+        }
+        
+        /* YouTube Banner - 2560 x 1440 px with safe zone 1546 x 423 px */
+        .youtube-banner {
+            width: 2560px;
+            height: 1440px;
+            position: relative;
+        }
+        
+        .youtube-safe-zone {
+            position: absolute;
+            width: 1546px;
+            height: 423px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: stretch;
+            overflow: hidden;
+        }
+        
+        /* Instagram Grid Post - 1080 x 1350 px (4:5) */
+        .instagram-post {
+            width: 1080px;
+            height: 1350px;
+        }
+        
+        /* Split Layout */
+        .split-layout {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .plugin-section {
+            flex: 1;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            overflow: hidden;
+        }
+        
+        .canvas-section {
+            background: linear-gradient(135deg, #0a1520 0%, #0a2a3d 100%);
+            border-right: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .quantum-section {
+            background: linear-gradient(135deg, #1a0a20 0%, #2d1b3d 100%);
+        }
+        
+        .plugin-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+            line-height: 1.1;
+        }
+        
+        .plugin-tagline {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+            max-width: 300px;
+            line-height: 1.4;
+        }
+        
+        .feature-highlight {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+        
+        .canvas-highlight {
+            color: #00d9ff;
+        }
+        
+        .quantum-highlight {
+            color: #ff6b8a;
+        }
+        
+        .price-display {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+        
+        .old-price {
+            font-size: 1.5rem;
+            color: #666;
+            text-decoration: line-through;
+        }
+        
+        .new-price {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        
+        .canvas-price {
+            color: #00d9ff;
+        }
+        
+        .quantum-price {
+            color: #ff6b8a;
+        }
+        
+        /* Center badge for split layout */
+        .center-badge {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #0a0a0f;
+            border: 3px solid #fff;
+            border-radius: 50px;
+            padding: 0.75rem 2rem;
+            font-weight: 700;
+            z-index: 20;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+        
+        .logo-watermark {
+            position: absolute;
+            bottom: 1rem;
+            opacity: 0.3;
+            font-size: 0.8rem;
+            letter-spacing: 0.1em;
+        }
+        
+        /* Background effects */
+        .bg-grid {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.5;
+        }
+        
+        .bg-glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            filter: blur(150px);
+            opacity: 0.4;
+        }
+        
+        .canvas-glow {
+            background: radial-gradient(circle, #00b4d8 0%, transparent 70%);
+            top: 50%;
+            left: -200px;
+            transform: translateY(-50%);
+        }
+        
+        .quantum-glow {
+            background: radial-gradient(circle, #ff4365 0%, transparent 70%);
+            top: 50%;
+            right: -200px;
+            transform: translateY(-50%);
+        }
+        
+        /* Visual elements */
+        .visual-element {
+            position: absolute;
+            opacity: 0.1;
+        }
+        
+        .curve-visual {
+            width: 200px;
+            height: 150px;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .eq-bars {
+            display: flex;
+            gap: 3px;
+            align-items: flex-end;
+            height: 60px;
+            opacity: 0.2;
+            margin-top: 1rem;
+        }
+        
+        .eq-bar {
+            width: 8px;
+            background: currentColor;
+            border-radius: 2px;
+        }
+        
+        /* Responsive scaling for preview */
+        .preview-container {
+            transform: scale(0.3);
+            transform-origin: top left;
+            margin-bottom: -70%;
+        }
+        
+        .no-ilok {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            color: #38f9d7;
+            margin-top: 1rem;
+        }
+        
+        /* Download button */
+        .download-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="margin-bottom: 3rem;">Secret Weapon DSP - Social Media Banners</h1>
+    
+    <!-- Facebook Banner -->
+    <div class="banner-container">
+        <h2 class="banner-title">Facebook Cover - Both Plugins (820x312px)</h2>
+        <div class="preview-container">
+            <div class="banner facebook-banner">
+                <div class="split-layout">
+                    <!-- Canvas Comp Side -->
+                    <div class="plugin-section canvas-section">
+                        <div class="bg-grid"></div>
+                        <div class="bg-glow canvas-glow"></div>
+                        <h3 class="plugin-name" style="font-size: 1.8rem;">CANVAS<br/>COMPRESSOR</h3>
+                        <p class="feature-highlight canvas-highlight">Draw Your Own<br/>Compression Curves</p>
+                        <p class="plugin-tagline">Shape dynamics exactly how you hear them. Design custom waveshaper curves for perfect harmonics.</p>
+                        <div class="price-display">
+                            <span class="old-price">$50</span>
+                            <span class="new-price canvas-price">$35</span>
+                        </div>
+                        <span class="logo-watermark">SECRET WEAPON DSP</span>
+                    </div>
+                    
+                    <!-- Quantum EQ Side -->
+                    <div class="plugin-section quantum-section">
+                        <div class="bg-grid"></div>
+                        <div class="bg-glow quantum-glow"></div>
+                        <h3 class="plugin-name" style="font-size: 1.8rem;">QUANTUM<br/>EQ</h3>
+                        <p class="feature-highlight quantum-highlight">Sonically Inspiring<br/>Visual Equalizer</p>
+                        <p class="plugin-tagline">See what you hear with real-time FFT. 10 bands of surgical precision meets musical transparency.</p>
+                        <div class="price-display">
+                            <span class="old-price">$50</span>
+                            <span class="new-price quantum-price">$35</span>
+                        </div>
+                        <span class="logo-watermark">SECRET WEAPON DSP</span>
+                    </div>
+                </div>
+                <div class="center-badge">LIMITED TIME SALE</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- YouTube Banner -->
+    <div class="banner-container">
+        <h2 class="banner-title">YouTube Channel Art - Both Plugins (2560x1440px, safe zone: 1546x423px)</h2>
+        <div class="preview-container">
+            <div class="banner youtube-banner">
+                <div class="bg-grid"></div>
+                <div class="bg-glow canvas-glow" style="width: 1000px; height: 1000px; top: 50%; left: 20%; transform: translate(-50%, -50%);"></div>
+                <div class="bg-glow quantum-glow" style="width: 1000px; height: 1000px; top: 50%; right: 20%; transform: translate(50%, -50%);"></div>
+                <div class="youtube-safe-zone">
+                    <!-- Canvas Comp Side -->
+                    <div class="plugin-section canvas-section">
+                        <h3 class="plugin-name" style="font-size: 2.5rem;">CANVAS COMPRESSOR</h3>
+                        <p class="feature-highlight canvas-highlight" style="font-size: 1.4rem;">Draw Your Dynamics</p>
+                        <p class="plugin-tagline" style="font-size: 1rem; max-width: 350px;">Create compression curves that breathe life into your mix</p>
+                        <div class="price-display">
+                            <span class="old-price" style="font-size: 2rem;">$50</span>
+                            <span class="new-price canvas-price" style="font-size: 3rem;">$35</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Quantum EQ Side -->
+                    <div class="plugin-section quantum-section">
+                        <h3 class="plugin-name" style="font-size: 2.5rem;">QUANTUM EQ</h3>
+                        <p class="feature-highlight quantum-highlight" style="font-size: 1.4rem;">See What You Hear</p>
+                        <p class="plugin-tagline" style="font-size: 1rem; max-width: 350px;">Visual precision meets sonic excellence in every band</p>
+                        <div class="price-display">
+                            <span class="old-price" style="font-size: 2rem;">$50</span>
+                            <span class="new-price quantum-price" style="font-size: 3rem;">$35</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="center-badge" style="font-size: 1.2rem; padding: 1rem 3rem;">NEW PLUGINS • LIMITED TIME SALE</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Instagram Post -->
+    <div class="banner-container">
+        <h2 class="banner-title">Instagram Post - Both Plugins (1080x1350px)</h2>
+        <div class="preview-container">
+            <div class="banner instagram-post">
+                <div style="position: absolute; top: 0; left: 0; right: 0; padding: 2rem; text-align: center; background: linear-gradient(to bottom, #0a0a0f 0%, transparent 100%); z-index: 20;">
+                    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 2rem; margin-bottom: 0.5rem;">NEW PLUGINS</h2>
+                    <div class="center-badge" style="position: relative; transform: none; margin: 0 auto; display: inline-block;">LIMITED TIME SALE</div>
+                </div>
+                <div class="split-layout" style="flex-direction: column; padding-top: 120px;">
+                    <!-- Canvas Comp Section -->
+                    <div class="plugin-section canvas-section" style="border-right: none; border-bottom: 2px solid rgba(255, 255, 255, 0.1);">
+                        <div class="bg-grid"></div>
+                        <div class="bg-glow canvas-glow" style="left: 50%; transform: translateX(-50%);"></div>
+                        <h3 class="plugin-name" style="font-size: 2.5rem;">CANVAS COMPRESSOR</h3>
+                        <p class="feature-highlight canvas-highlight" style="font-size: 1.3rem;">Draw Your Compression Curves</p>
+                        <p class="plugin-tagline" style="font-size: 1rem;">Visual dynamics control that lets you shape sound intuitively</p>
+                        <div class="price-display">
+                            <span class="old-price" style="font-size: 2rem;">$50</span>
+                            <span class="new-price canvas-price" style="font-size: 3.5rem;">$35</span>
+                        </div>
+                        <div class="eq-bars" style="justify-content: center;">
+                            <div class="eq-bar" style="height: 30%; background: #00b4d8;"></div>
+                            <div class="eq-bar" style="height: 70%; background: #00b4d8;"></div>
+                            <div class="eq-bar" style="height: 50%; background: #00b4d8;"></div>
+                            <div class="eq-bar" style="height: 90%; background: #00b4d8;"></div>
+                            <div class="eq-bar" style="height: 40%; background: #00b4d8;"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quantum EQ Section -->
+                    <div class="plugin-section quantum-section">
+                        <div class="bg-grid"></div>
+                        <div class="bg-glow quantum-glow" style="right: 50%; transform: translateX(50%);"></div>
+                        <h3 class="plugin-name" style="font-size: 2.5rem;">QUANTUM EQ</h3>
+                        <p class="feature-highlight quantum-highlight" style="font-size: 1.3rem;">Visually Inspiring Equalizer</p>
+                        <p class="plugin-tagline" style="font-size: 1rem;">See your sound with real-time FFT and surgical precision</p>
+                        <div class="price-display">
+                            <span class="old-price" style="font-size: 2rem;">$50</span>
+                            <span class="new-price quantum-price" style="font-size: 3.5rem;">$35</span>
+                        </div>
+                        <div class="eq-bars" style="justify-content: center;">
+                            <div class="eq-bar" style="height: 60%; background: #ff4365;"></div>
+                            <div class="eq-bar" style="height: 40%; background: #ff4365;"></div>
+                            <div class="eq-bar" style="height: 80%; background: #ff4365;"></div>
+                            <div class="eq-bar" style="height: 30%; background: #ff4365;"></div>
+                            <div class="eq-bar" style="height: 70%; background: #ff4365;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div style="position: absolute; bottom: 2rem; left: 0; right: 0; text-align: center; color: #666; font-size: 0.9rem;">
+                    Windows VST3 • No iLok Required<br/>
+                    <span style="letter-spacing: 0.1em;">SECRETWEAPONDSP.COM</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Alternative Messaging Versions -->
+    <h2 style="margin-top: 4rem; margin-bottom: 2rem; color: #888;">Alternative Messaging Options</h2>
+    
+    <!-- Facebook Banner - Alternative -->
+    <div class="banner-container">
+        <h2 class="banner-title">Facebook Cover - Alternative Messaging (820x312px)</h2>
+        <div class="preview-container">
+            <div class="banner facebook-banner">
+                <div class="split-layout">
+                    <!-- Canvas Comp Side -->
+                    <div class="plugin-section canvas-section">
+                        <div class="bg-grid"></div>
+                        <div class="bg-glow canvas-glow"></div>
+                        <h3 class="plugin-name" style="font-size: 1.8rem;">CANVAS<br/>COMPRESSOR</h3>
+                        <p class="feature-highlight canvas-highlight">Finally, Compression<br/>That Makes Sense</p>
+                        <p class="plugin-tagline">Stop guessing with ratios. Draw exactly what you want to hear.</p>
+                        <div class="price-display">
+                            <span class="old-price">$50</span>
+                            <span class="new-price canvas-price">$35</span>
+                        </div>
+                        <span class="logo-watermark">SECRET WEAPON DSP</span>
+                    </div>
+                    
+                    <!-- Quantum EQ Side -->
+                    <div class="plugin-section quantum-section">
+                        <div class="bg-grid"></div>
+                        <div class="bg-glow quantum-glow"></div>
+                        <h3 class="plugin-name" style="font-size: 1.8rem;">QUANTUM<br/>EQ</h3>
+                        <p class="feature-highlight quantum-highlight">EQ That Shows<br/>What It Sounds Like</p>
+                        <p class="plugin-tagline">120fps visual feedback meets surgical precision. Mix with your eyes and ears.</p>
+                        <div class="price-display">
+                            <span class="old-price">$50</span>
+                            <span class="new-price quantum-price">$35</span>
+                        </div>
+                        <span class="logo-watermark">SECRET WEAPON DSP</span>
+                    </div>
+                </div>
+                <div class="center-badge">30% OFF LAUNCH SALE</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Instagram Story Template -->
+    <div class="banner-container">
+        <h2 class="banner-title">Instagram Story - Both Plugins (1080x1920px)</h2>
+        <div class="preview-container">
+            <div class="banner" style="width: 1080px; height: 1920px; background: #0a0a0f;">
+                <div style="height: 100%; display: flex; flex-direction: column; padding: 3rem 2rem;">
+                    <div style="text-align: center; margin-bottom: 3rem;">
+                        <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 3rem; margin-bottom: 1rem;">NEW PLUGINS</h1>
+                        <div class="center-badge" style="position: relative; transform: none; margin: 0 auto; display: inline-block; font-size: 1.2rem;">LAUNCH SALE</div>
+                    </div>
+                    
+                    <!-- Canvas Comp -->
+                    <div style="background: linear-gradient(135deg, #0a1520 0%, #0a2a3d 100%); border-radius: 20px; padding: 3rem; margin-bottom: 2rem; position: relative; overflow: hidden;">
+                        <div class="bg-grid"></div>
+                        <h3 class="plugin-name" style="font-size: 2.5rem; color: white; position: relative;">CANVAS<br/>COMPRESSOR</h3>
+                        <p style="font-size: 1.2rem; color: #00d9ff; margin: 1rem 0; font-weight: 600;">Draw Your Sound</p>
+                        <p style="font-size: 1rem; opacity: 0.8; margin-bottom: 2rem;">Visual compression control that actually makes sense</p>
+                        <div class="price-display" style="justify-content: flex-start;">
+                            <span class="old-price" style="font-size: 2rem;">$50</span>
+                            <span class="new-price" style="font-size: 3rem; color: #00d9ff;">$35</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Quantum EQ -->
+                    <div style="background: linear-gradient(135deg, #1a0a20 0%, #2d1b3d 100%); border-radius: 20px; padding: 3rem; margin-bottom: 2rem; position: relative; overflow: hidden;">
+                        <div class="bg-grid"></div>
+                        <h3 class="plugin-name" style="font-size: 2.5rem; color: white; position: relative;">QUANTUM<br/>EQ</h3>
+                        <p style="font-size: 1.2rem; color: #ff6b8a; margin: 1rem 0; font-weight: 600;">See What You Hear</p>
+                        <p style="font-size: 1rem; opacity: 0.8; margin-bottom: 2rem;">10-band precision with stunning visual feedback</p>
+                        <div class="price-display" style="justify-content: flex-start;">
+                            <span class="old-price" style="font-size: 2rem;">$50</span>
+                            <span class="new-price" style="font-size: 3rem; color: #ff6b8a;">$35</span>
+                        </div>
+                    </div>
+                    
+                    <div style="flex: 1;"></div>
+                    
+                    <div style="text-align: center; padding: 2rem; background: rgba(255,255,255,0.05); border-radius: 20px;">
+                        <p style="font-size: 1.2rem; margin-bottom: 1rem; font-weight: 600;">Windows VST3</p>
+                        <p style="font-size: 1.1rem; color: #38f9d7;">✓ No iLok Required</p>
+                        <p style="font-size: 1rem; margin-top: 2rem; letter-spacing: 0.1em; opacity: 0.6;">SECRETWEAPONDSP.COM</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <p style="margin-top: 4rem; color: #666;">
+        <strong>Export Instructions:</strong><br/>
+        1. Use browser developer tools (F12)<br/>
+        2. Select the banner element in Elements panel<br/>
+        3. Right-click and choose "Capture node screenshot"<br/>
+        4. Or add html2canvas library for automated export<br/>
+        <br/>
+        <strong>Key Messages to Emphasize:</strong><br/>
+        • Visual control - "See what you hear"<br/>
+        • Intuitive design - "Draw your sound"<br/>
+        • No iLok required<br/>
+        • Limited time $35 (from $50)<br/>
+        • Windows VST3 compatibility
+    </p>
+    
+    <script>
+        // Optional: Add html2canvas for easy export
+        // Include: <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+        
+        // Function to capture banner
+        function captureBanner(bannerClass) {
+            const banner = document.querySelector(`.${bannerClass}`);
+            html2canvas(banner, { scale: 1 }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `${bannerClass}.png`;
+                link.href = canvas.toDataURL();
+                link.click();
+            });
+        }
+    </script>
+</body>
+</html>

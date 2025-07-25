@@ -1,0 +1,138 @@
+<div class="collection-template">
+  <div class="collection-hero">
+    <h1 class="collection-title">{{ collection.title }}</h1>
+    {% if collection.description != blank %}
+      <div class="collection-description">
+        {{ collection.description }}
+      </div>
+    {% endif %}
+  </div>
+  
+  <div class="collection-toolbar">
+    <div class="collection-info">
+      <span>{{ collection.products_count }} 
+        {%- if collection.products_count == 1 %} product{% else %} products{% endif -%}
+      </span>
+    </div>
+    
+    <div class="collection-sort">
+      <label for="sort-by">Sort by:</label>
+      <select id="sort-by" class="sort-select">
+        <option value="manual">Featured</option>
+        <option value="best-selling">Best Selling</option>
+        <option value="title-ascending">A-Z</option>
+        <option value="title-descending">Z-A</option>
+        <option value="price-ascending">Price: Low to High</option>
+        <option value="price-descending">Price: High to Low</option>
+        <option value="created-ascending">Oldest to Newest</option>
+        <option value="created-descending">Newest to Oldest</option>
+      </select>
+    </div>
+  </div>
+  
+  <div class="products-grid">
+    {% for product in collection.products %}
+      {% render 'product-card', product: product %}
+    {% else %}
+      <div class="empty-collection">
+        <i class="fas fa-box-open"></i>
+        <p>No products found in this collection.</p>
+      </div>
+    {% endfor %}
+  </div>
+  
+  {% if paginate.pages > 1 %}
+    <div class="pagination">
+      {{ paginate | default_pagination }}
+    </div>
+  {% endif %}
+</div>
+
+<style>
+  .collection-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .collection-info {
+    color: var(--text-secondary);
+  }
+  
+  .collection-sort {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .sort-select {
+    padding: 0.5rem 1rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    cursor: pointer;
+  }
+  
+  .empty-collection {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 6rem 2rem;
+    color: var(--text-tertiary);
+  }
+  
+  .empty-collection i {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+  
+  .pagination {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 4rem 2rem;
+  }
+  
+  .pagination a,
+  .pagination span {
+    padding: 0.5rem 1rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+  
+  .pagination a:hover {
+    background: var(--hover-bg);
+    color: var(--text-primary);
+  }
+  
+  .pagination .current {
+    background: var(--primary-gradient);
+    color: white;
+    border-color: transparent;
+  }
+</style>
+
+<script>
+  // Sort functionality
+  document.getElementById('sort-by').addEventListener('change', function() {
+    const url = new URL(window.location);
+    url.searchParams.set('sort_by', this.value);
+    window.location = url.toString();
+  });
+  
+  // Set current sort value
+  const urlParams = new URLSearchParams(window.location.search);
+  const currentSort = urlParams.get('sort_by');
+  if (currentSort) {
+    document.getElementById('sort-by').value = currentSort;
+  }
+</script>
