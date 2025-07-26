@@ -1359,18 +1359,95 @@
                 display: block;
             }
             
+            /* Allow scrolling to see all plugin content on mobile */
+            .interface-showcase {
+                overflow-x: visible;
+                overflow-y: visible;
+            }
+            
+            /* Plugin container for mobile */
+            #pluginContainer {
+                overflow-x: auto;
+                overflow-y: hidden;
+                -webkit-overflow-scrolling: touch;
+                padding-bottom: 20px;
+                position: relative;
+            }
+            
+            /* Hide scrollbar on mobile to prevent issues */
+            #pluginContainer::-webkit-scrollbar {
+                height: 0;
+                display: none;
+            }
+            
+            #pluginContainer {
+                scrollbar-width: none; /* Firefox */
+                -ms-overflow-style: none; /* IE/Edge */
+            }
+            
+            /* Add touch-friendly scrolling area */
+            .interface-showcase {
+                padding-bottom: 30px; /* Extra space for scrollbar interaction */
+            }
+            
+            /* Remove the pointer-events disable - it breaks control points */
+            
             /* Plugin will be scaled via JavaScript */
             #quantumEQContainer > div {
                 transform-origin: top left !important;
                 position: relative !important;
             }
             
-            /* Ensure touch events work */
-            #quantumEQContainer * {
-                touch-action: none;
+            /* Ensure touch events work - but allow scrolling and slider interaction */
+            #quantumEQContainer {
+                touch-action: pan-x pan-y; /* Allow scrolling in both directions */
                 -webkit-touch-callout: none;
                 -webkit-user-select: none;
                 user-select: none;
+            }
+            
+            /* Allow touch on interactive elements */
+            #quantumEQContainer input[type="range"],
+            #quantumEQContainer input[type="number"],
+            #quantumEQContainer button,
+            #quantumEQContainer select,
+            #quantumEQContainer .slider,
+            #quantumEQContainer .control-point {
+                touch-action: manipulation !important;
+                -webkit-user-select: none;
+                user-select: none;
+            }
+            
+            /* Mobile-specific notice styling */
+            .mobile-eq-notice {
+                background: rgba(255, 193, 7, 0.1);
+                border: 1px solid rgba(255, 193, 7, 0.3);
+                color: #ffc107;
+                padding: 1rem;
+                margin: 1rem 0;
+                border-radius: 8px;
+                text-align: center;
+                font-size: 0.875rem;
+                line-height: 1.5;
+            }
+            
+            /* Extra small phones - show warning */
+            @media (max-width: 380px) {
+                .mobile-eq-notice {
+                    background: rgba(239, 68, 68, 0.1);
+                    border-color: rgba(239, 68, 68, 0.3);
+                    color: #ef4444;
+                    padding: 1.5rem 1rem;
+                    font-size: 0.9rem;
+                }
+                
+                .mobile-eq-notice::after {
+                    content: "\A\A⚠️ Quantum EQ's 10-band interface is optimized for larger screens. Consider using a tablet or desktop for the best experience.";
+                    white-space: pre-wrap;
+                    display: block;
+                    margin-top: 0.5rem;
+                    font-weight: 600;
+                }
             }
             
             /* Hide extra elements */
@@ -1589,6 +1666,13 @@
                     <div class="loading-text" style="margin-top: 20px; color: var(--text-secondary);">Loading Quantum EQ...</div>
                 </div>
                 <div id="quantumEQContainer" style="width: 100%; height: 100%; position: relative;"></div>
+                <!-- Mobile fallback message for very small screens -->
+                <div class="mobile-fallback" style="display: none; padding: 3rem 1.5rem; text-align: center; color: var(--text-secondary);">
+                    <i class="fas fa-mobile-alt" style="font-size: 3rem; color: #667eea; margin-bottom: 1.5rem; display: block;"></i>
+                    <h3 style="color: var(--text-primary); margin-bottom: 1rem;">Quantum EQ Requires More Screen Space</h3>
+                    <p style="margin-bottom: 1.5rem;">With 10 fully-featured bands, Quantum EQ needs a larger display for proper control.</p>
+                    <p style="font-size: 0.875rem; opacity: 0.8;">Please use a tablet or desktop computer, or rotate your device to landscape mode for a better experience.</p>
+                </div>
             </div>
         </div>
     </section>
@@ -1909,7 +1993,7 @@
                     // Apply mobile scaling - simple proportional scale
                     function applyMobileScaling() {
                         const pluginWidth = 1200;  // Fixed plugin width for Quantum EQ
-                        const pluginHeight = 600; // Fixed plugin height for Quantum EQ
+                        const pluginHeight = 600; // Original plugin height
                         const viewportWidth = window.innerWidth;
                         
                         // Remove any existing mobile notices first
@@ -1921,33 +2005,37 @@
                         if (viewportWidth <= 768) {
                             // Add mobile notice
                             const mobileNotice = document.createElement('div');
-                            mobileNotice.style.cssText = `
-                                background: rgba(102, 126, 234, 0.1);
-                                border: 1px solid rgba(102, 126, 234, 0.3);
-                                border-radius: 8px;
-                                padding: 1rem;
-                                margin-bottom: 1rem;
-                                text-align: center;
-                                font-size: 0.875rem;
-                                color: rgba(255, 255, 255, 0.8);
-                            `;
-                            mobileNotice.innerHTML = `
-                                <i class="fas fa-info-circle" style="margin-right: 0.5rem; color: #667eea;"></i>
-                                Use two fingers to pan if controls are off-screen. Tap and drag to adjust EQ bands.
-                            `;
+                            const isVerySmallPhone = viewportWidth < 380;
+                            
+                            // Apply CSS class instead of inline styles
                             mobileNotice.className = 'mobile-eq-notice';
+                            
+                            if (isVerySmallPhone) {
+                                mobileNotice.innerHTML = `
+                                    <i class="fas fa-exclamation-triangle" style="margin-right: 0.5rem; color: #ef4444;"></i>
+                                    <strong>Limited Mobile View:</strong> The 10-band EQ interface is heavily scaled.
+                                    <br><span style="font-size: 0.85em; opacity: 0.9;">For precise control, please use a tablet or desktop.</span>
+                                `;
+                            } else {
+                                mobileNotice.innerHTML = `
+                                    <i class="fas fa-info-circle" style="margin-right: 0.5rem; color: #667eea;"></i>
+                                    <strong>Mobile View:</strong> Swipe on the plugin area (not the scrollbar) to see all controls.
+                                    <br><span style="font-size: 0.85em; opacity: 0.8;">⚠️ Avoid using the scrollbar - it may cause issues. Swipe the content directly instead.</span>
+                                `;
+                            }
+                            
                             container.parentElement.insertBefore(mobileNotice, container);
                             
                             // For mobile, scale to fit viewport width with padding
-                            const padding = 40; // More padding for mobile
+                            const padding = 20; // Less padding for more space
                             const availableWidth = viewportWidth - padding;
                             
                             // Calculate scale based on width
                             let scale = availableWidth / pluginWidth;
                             
-                            // Different minimum scales based on device
+                            // Adjusted minimum scales for Quantum EQ's 10 bands
                             const isSmallPhone = viewportWidth < 375;
-                            const minScale = isSmallPhone ? 0.3 : 0.4;
+                            const minScale = isSmallPhone ? 0.25 : 0.35; // Slightly smaller to show more
                             scale = Math.max(minScale, scale);
                             
                             // Apply the scale transform to the plugin itself
@@ -1962,36 +2050,41 @@
                             
                             // Set the quantumEQContainer dimensions
                             const eqContainer = document.getElementById('quantumEQContainer');
-                            eqContainer.style.height = `${scaledHeight}px`;
+                            eqContainer.style.height = `${scaledHeight}px`; // Exact height, no extra padding needed
                             eqContainer.style.width = `${scaledWidth}px`;
                             eqContainer.style.margin = '0 auto';
                             eqContainer.style.position = 'relative';
                             
-                            // Enable horizontal scrolling if needed
-                            const interfaceShowcase = container.parentElement;
+                            // Add visual scroll indicators
                             if (scale < 0.5) {
-                                interfaceShowcase.style.overflowX = 'auto';
-                                interfaceShowcase.style.webkitOverflowScrolling = 'touch';
-                                interfaceShowcase.style.scrollbarWidth = 'thin';
-                                
-                                // Add scroll hint
-                                const scrollHint = document.createElement('div');
-                                scrollHint.style.cssText = `
-                                    text-align: center;
-                                    font-size: 0.75rem;
-                                    color: rgba(255, 255, 255, 0.5);
-                                    margin-top: 0.5rem;
+                                // Add gradient indicators for scrolling
+                                const leftIndicator = document.createElement('div');
+                                leftIndicator.style.cssText = `
+                                    position: absolute;
+                                    left: 0;
+                                    top: 0;
+                                    bottom: 0;
+                                    width: 30px;
+                                    background: linear-gradient(to right, rgba(10,10,15,0.8), transparent);
+                                    pointer-events: none;
+                                    z-index: 10;
                                 `;
-                                scrollHint.innerHTML = '<i class="fas fa-arrows-alt-h"></i> Swipe horizontally to see all controls';
-                                scrollHint.className = 'scroll-hint';
                                 
-                                if (!document.querySelector('.scroll-hint')) {
-                                    eqContainer.parentElement.appendChild(scrollHint);
-                                }
-                            } else {
-                                interfaceShowcase.style.overflowX = 'hidden';
-                                const scrollHint = document.querySelector('.scroll-hint');
-                                if (scrollHint) scrollHint.remove();
+                                const rightIndicator = document.createElement('div');
+                                rightIndicator.style.cssText = `
+                                    position: absolute;
+                                    right: 0;
+                                    top: 0;
+                                    bottom: 0;
+                                    width: 30px;
+                                    background: linear-gradient(to left, rgba(10,10,15,0.8), transparent);
+                                    pointer-events: none;
+                                    z-index: 10;
+                                `;
+                                
+                                container.style.position = 'relative';
+                                container.appendChild(leftIndicator);
+                                container.appendChild(rightIndicator);
                             }
                             
                             // Update touch event coordinates
@@ -2051,10 +2144,17 @@
                         applyMobileScaling();
                     }, 100);
                     
-                    // Reapply on resize
+                    // Remove all the touch handling fixes since they break control points
+                    // Instead, we'll adjust the layout to fit all controls without scrolling
+                    
+                    // Reapply on resize with debounce
+                    let resizeTimeout;
                     window.addEventListener('resize', () => {
-                        setTimeout(applyMobileScaling, 50);
+                        clearTimeout(resizeTimeout);
+                        resizeTimeout = setTimeout(applyMobileScaling, 250);
                     });
+                    
+                    // No scroll detection needed - all controls fit without scrolling
                     
                     // Store the patchConnection globally for audio routing
                     window.patchConnection = patchConnection;
