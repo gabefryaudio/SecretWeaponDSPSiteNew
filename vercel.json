@@ -14,5 +14,14 @@
         { "key": "Access-Control-Allow-Headers", "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version" }
       ]
     }
+  ],
+  "rewrites": [
+    { "source": "/", "destination": "/home.html" },
+    { "source": "/home", "destination": "/home.html" },
+    { "source": "/plugins", "destination": "/plugins-overview.html" },
+    { "source": "/canvas-comp", "destination": "/canvas-compressor-page.html" },
+    { "source": "/quantum-eq", "destination": "/quantum-eq-page.html" },
+    { "source": "/contact", "destination": "/contact-page.html" },
+    { "source": "/support", "destination": "/support-page.html" }
   ]
 }

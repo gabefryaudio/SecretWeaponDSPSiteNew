@@ -11,7 +11,8 @@
       "Bash(cmake:*)",
       "Bash(cmd.exe /c \"cmake --build . --config Release\")",
       "Bash(python:*)",
-      "WebFetch(domain:www.pluginboutique.com)"
+      "WebFetch(domain:www.pluginboutique.com)",
+      "Bash(mv:*)"
     ],
     "deny": []
   }
