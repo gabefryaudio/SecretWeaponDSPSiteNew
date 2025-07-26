@@ -2034,9 +2034,11 @@
                             let scale = availableWidth / pluginWidth;
                             
                             // Adjusted minimum scales for Quantum EQ's 10 bands
+                            // Match the "parameters out of view" layout
                             const isSmallPhone = viewportWidth < 375;
-                            const minScale = isSmallPhone ? 0.25 : 0.35; // Slightly smaller to show more
-                            scale = Math.max(minScale, scale);
+                            const minScale = isSmallPhone ? 0.6 : 0.65; // Higher scale to match reference image
+                            const maxScale = 0.75; // Slightly higher cap
+                            scale = Math.max(minScale, Math.min(maxScale, scale));
                             
                             // Apply the scale transform to the plugin itself
                             customView.style.transform = `scale(${scale})`;
@@ -2056,7 +2058,7 @@
                             eqContainer.style.position = 'relative';
                             
                             // Add visual scroll indicators
-                            if (scale < 0.5) {
+                            if (scale < 0.75) {
                                 // Add gradient indicators for scrolling
                                 const leftIndicator = document.createElement('div');
                                 leftIndicator.style.cssText = `
@@ -2100,7 +2102,7 @@
                             });
                         } else if (viewportWidth <= 1024) {
                             // Tablet scaling
-                            const scale = 0.75;
+                            const scale = 0.85;
                             customView.style.transform = `scale(${scale})`;
                             customView.style.transformOrigin = 'top left';
                             customView.style.width = `${pluginWidth}px`;
