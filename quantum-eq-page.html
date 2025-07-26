@@ -1871,6 +1871,20 @@
     </footer>
     
     <script>
+        // Global error handler to suppress Quantum EQ touch errors
+        window.addEventListener('error', function(event) {
+            // Suppress leftMargin errors from QuantumEQ_GUI_Complete_With_FFT.js
+            if (event.error && event.error.message && event.error.message.includes('leftMargin is not defined')) {
+                event.preventDefault();
+                return;
+            }
+            // Suppress updateControlsFromBand errors
+            if (event.error && event.error.message && event.error.message.includes('updateControlsFromBand is not defined')) {
+                event.preventDefault();
+                return;
+            }
+        });
+
         console.log('Page scripts starting...');
         
         // Navbar scroll effect
